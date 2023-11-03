@@ -9,8 +9,8 @@ type Props = {
 const SmallCard: FC<Props> = ({ name, email }) => {
   return (
     <div className={styles.card}>
-      <p>{name}</p>
-      <p>{email}</p>
+      <p className={styles.text}>{name}</p>
+      <p className={styles.text}>{email}</p>
     </div>
   );
 };
