@@ -55,14 +55,14 @@
 
 .title {
     font-size:1.8rem;
-    font-weight: 500;
+    font-weight: var(--title-weight);
     line-height: 1.7rem;
 
 }
 
 .subtitle {
     font-size: 0.9rem;
-    font-weight:300;
+    font-weight: var(--textblock-weight);
 }
 
 .tag {
