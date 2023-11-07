@@ -1,7 +1,7 @@
 .imgbg {
-    background-image: url(../../assets/hero-img.jpeg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100vh;
-
+  background-image: url(../../assets/hero-img.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  height: 100vh;
 }

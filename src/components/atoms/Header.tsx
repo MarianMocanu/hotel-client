@@ -1,20 +1,26 @@
-import React from 'react'
-import styles from './Header.module.css'
-import Image from 'next/image'
-import logo from '@/assets/logo.png'
+import React, { FC } from 'react';
+import styles from './Header.module.css';
+import Image from 'next/image';
+import logo from '@/assets/logo.png';
+import { FaChevronDown, FaUser, FaBars } from 'react-icons/fa';
 
-
-function Header()  {
+const Header: FC = () => {
   return (
     <nav className={styles.nav}>
-        <Image src={logo} alt="logo" height="40" />
-        <ul className={styles.list}>
-            <li>Locations</li>
-            <li>Profile</li>
-            <li>Menu</li>
-        </ul>
+      <Image src={logo} alt="logo" height="40" />
+      <ul className={styles.list}>
+        <li className={styles.item}>
+          Locations <FaChevronDown />
+        </li>
+        <li className={styles.item}>
+          Profile <FaUser />
+        </li>
+        <li className={styles.item}>
+          Menu <FaBars />
+        </li>
+      </ul>
     </nav>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

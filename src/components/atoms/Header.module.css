@@ -1,16 +1,26 @@
 .nav {
-    position: fixed;
-    display:flex;
-    justify-content: space-between;
-    align-items: center;
-    width: -webkit-fill-available;
-    padding: 1rem;
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1rem;
+  /* background-color: aqua; */
 }
 
 .list {
-    list-style: none;
-    display: flex; 
-    flex-direction: row;
-    gap: 1rem;
-    color: white;
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  color: white;
+  align-items: center;
+}
+
+.item {
+  font-size: 1rem;
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
 }
