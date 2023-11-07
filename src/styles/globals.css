@@ -1,10 +1,18 @@
 
+
 :root {
-  --primary-color: #F0EAE2;
-  --primary-darker: #EDE3D8;
-  --secondary-color: #252C2F;
+  /* btn color: primary, footer color: primary-darker
+  text color: either black or white */
+  --primary-color: #182B39;
+  --primary-darker: #252C2F; 
+  --secondary-color: #F0EAE2;
+  --secondary-darker: #EDE3D8;
+  --tertiary-color: #F0F0F0;
   --title-weight: 500;
+  --title-lineheight: 1.7rem;
   --textblock-weight: 300;
+  --bton-border: 20px;
+  --card-border: 10px;
 }
 
 
