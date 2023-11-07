@@ -1,13 +1,13 @@
-import React from 'react'
-import styles from './HeroSection.module.css'
-import SearchEngine from './SearchEngine'
+import React from 'react';
+import styles from './HeroSection.module.css';
+import SearchEngine from './SearchEngine';
 
 function HeroSection() {
   return (
     <section className={styles.imgbg}>
-        <SearchEngine />
+      <SearchEngine />
     </section>
-  )
+  );
 }
 
-export default HeroSection
+export default HeroSection;
