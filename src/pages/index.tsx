@@ -4,20 +4,29 @@ import HeroSection from '@/components/molecules/HeroSection';
 import CardsSection from '@/components/molecules/CardsSection';
 import OffersSection from '@/components/molecules/OffersSection';
 import Footer from '@/components/atoms/Footer';
-import { MouseEvent } from 'react';
-import Modal from '@/components/atoms/Modal';
 import React, { useState } from 'react';
 import Login from '@/components/molecules/Login';
+import 'react-modern-drawer/dist/index.css';
+import SignUpDrawer from '@/components/molecules/SignUpDrawer';
 
 export default function Home() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   function closeModal(): void {
-    setIsOpen(false);
+    setModalOpen(false);
   }
 
-  function openModal(event: MouseEvent): void {
-    setIsOpen(true);
+  function openModal(): void {
+    setModalOpen(true);
+  }
+
+  function handleSignUpClick(): void {
+    setDrawerOpen(true);
+  }
+
+  function closeDrawer(): void {
+    setDrawerOpen(false);
   }
 
   return (
@@ -34,12 +43,13 @@ export default function Home() {
           handleProfileClick={openModal}
           handleMenuClick={() => console.log('TODO')}
         >
-          <Login isOpen={isOpen} closeModal={closeModal} />
+          <Login isOpen={isModalOpen} closeModal={closeModal} onSignUpClick={handleSignUpClick} />
         </Header>
         <main>
           <HeroSection />
           <CardsSection />
           <OffersSection />
+          <SignUpDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
         </main>
         <Footer />
       </div>

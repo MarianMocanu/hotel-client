@@ -1,11 +1,11 @@
 import React, { FC, MouseEvent, useEffect, PropsWithChildren } from 'react';
-import styles from './Modal.module.css';
+import styles from '@/styles/Modal.module.css';
 
 interface Props extends PropsWithChildren {
   isOpen: boolean;
   closeModal: () => void;
-  top?: number;
-  right?: number;
+  top?: number | string;
+  right?: number | string;
 }
 
 const Modal: FC<Props> = ({ closeModal, isOpen, children, top, right }) => {
