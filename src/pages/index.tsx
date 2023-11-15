@@ -1,14 +1,56 @@
-import { Head } from "next/document";
-import  Header  from "../components/atoms/Header";
-import HeroSection from "@/components/molecules/HeroSection";
-import CardsSection from "@/components/molecules/CardsSection";
-import OffersSection from "@/components/molecules/OffersSection";
-import Footer from "@/components/atoms/Footer";
-
-
-
+import { Head } from 'next/document';
+import Header from '../components/atoms/Header';
+import HeroSection from '@/components/molecules/HeroSection';
+import CardsSection from '@/components/molecules/CardsSection';
+import OffersSection from '@/components/molecules/OffersSection';
+import Footer from '@/components/atoms/Footer';
+import React, { useEffect, useState, useContext } from 'react';
+import Login from '@/components/molecules/Login';
+import 'react-modern-drawer/dist/index.css';
+import SignUpDrawer from '@/components/molecules/SignUpDrawer';
+import { fetchProfile } from '@/app/authAPI';
+import { Context } from '@/components/atoms/Context';
+import ErrorBoundary from '@/components/atoms/ErrorBoundary';
 
 export default function Home() {
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
+  const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const { setUser, setError } = useContext(Context);
+
+  function closeModal(): void {
+    setModalOpen(false);
+  }
+
+  function openModal(): void {
+    setModalOpen(true);
+  }
+
+  function handleSignUpClick(): void {
+    setDrawerOpen(true);
+  }
+
+  function closeDrawer(): void {
+    setDrawerOpen(false);
+  }
+
+  useEffect(() => {
+    async function getLogin() {
+      try {
+        const response = await fetchProfile();
+        if (response && response.ok) {
+          const profile = await response.json();
+          if (profile.name && profile.email) {
+            setUser(profile);
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing response', error);
+        localStorage.removeItem('@token');
+      }
+    }
+    getLogin();
+  }, []);
+
   return (
     <div>
       {/* <Head>
@@ -18,11 +60,19 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head> */}
       <div>
-        <Header />
+        <ErrorBoundary />
+        <Header
+          handleLocationClick={() => console.log('TODO')}
+          handleProfileClick={openModal}
+          handleMenuClick={() => console.log('TODO')}
+        >
+          <Login isOpen={isModalOpen} closeModal={closeModal} onSignUpClick={handleSignUpClick} />
+        </Header>
         <main>
           <HeroSection />
           <CardsSection />
           <OffersSection />
+          <SignUpDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
         </main>
         <Footer />
       </div>

@@ -1,0 +1,30 @@
+.container {
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.buttonPrimary {
+  height: 3.2rem;
+  width: 100%;
+  margin: 0.5rem;
+  background-color: var(--primary-color);
+  border-radius: var(--bton-border);
+  border: 1px solid var(--primary-color);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.buttonSecondary {
+  height: 3.2rem;
+  width: 100%;
+  margin: 0.5rem;
+  background-color: white;
+  border-radius: var(--bton-border);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  cursor: pointer;
+}

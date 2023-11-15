@@ -1,28 +1,23 @@
-
-
 :root {
   /* btn color: primary, footer color: primary-darker
   text color: either black or white */
-  --primary-color: #182B39;
-  --primary-darker: #252C2F; 
-  --secondary-color: #F0EAE2;
-  --secondary-darker: #EDE3D8;
-  --tertiary-color: #F0F0F0;
+  --primary-color: #182b39;
+  --primary-darker: #252c2f;
+  --secondary-color: #f0eae2;
+  --secondary-darker: #ede3d8;
+  --tertiary-color: #f0f0f0;
   --title-weight: 500;
   --title-lineheight: 1.7rem;
   --textblock-weight: 300;
-  --bton-border: 20px;
+  --bton-border: 2rem;
   --card-border: 10px;
 }
 
-
-
-
 * {
   margin: 0;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .title {
-  color:brown
+  color: brown;
 }

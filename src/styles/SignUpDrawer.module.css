@@ -1,0 +1,42 @@
+.container {
+  padding: 2.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+.info {
+  font-size: 1rem;
+  padding-top: 1rem;
+}
+
+.icon {
+  height: 2.5rem;
+  width: 2.5rem;
+  background-color: lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2rem;
+  cursor: pointer;
+}
+
+.form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 3rem 0;
+}
