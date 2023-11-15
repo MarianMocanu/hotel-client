@@ -15,12 +15,12 @@ const UX_ERRORS = {
 type Props = {
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  onBlur: (target: string) => void;
+  onBlur: (target: FocusEvent<HTMLInputElement>) => void;
   placeholder: string;
   name: 'name' | 'password' | 'confirmPassword' | 'email' | 'address' | 'phone' | 'dob';
   type?: HTMLInputTypeAttribute;
   animated?: boolean;
-  isValid?: boolean;
+  showError?: boolean;
 };
 
 const Input: FC<Props> = ({
@@ -31,7 +31,7 @@ const Input: FC<Props> = ({
   type,
   animated,
   onBlur,
-  isValid,
+  showError,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -41,14 +41,14 @@ const Input: FC<Props> = ({
 
   const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
     setIsFocused(false);
-    onBlur(event.target.name);
+    onBlur(event);
   };
 
   return (
     <div>
       <div
         className={
-          isValid
+          !showError
             ? isFocused
               ? styles.focusedInputContainer
               : styles.inputContainer
@@ -78,7 +78,7 @@ const Input: FC<Props> = ({
           id="animatedInput"
         />
       </div>
-      <div className={isValid ? styles.horizontal : styles.error}>
+      <div className={!showError ? styles.horizontal : styles.error}>
         <FaInfoCircle color="red" />
         <div className={styles.message}>{UX_ERRORS[name]}</div>
       </div>

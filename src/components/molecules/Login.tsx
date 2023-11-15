@@ -1,8 +1,8 @@
-import React, { FC, useState, ChangeEvent, FormEvent, useContext, FocusEvent } from 'react';
+import React, { FC, useState, ChangeEvent, FormEvent, useContext, useEffect } from 'react';
 import Modal from '@/components/atoms/Modal';
 import styles from '@/styles/Login.module.css';
 import Button from '../atoms/Button';
-import { login } from '@/app/authAPI';
+import { fetchProfile, login } from '@/app/authAPI';
 import { Context, User } from '../atoms/Context';
 import Input from '../atoms/Input';
 
@@ -12,16 +12,22 @@ type Props = {
   onSignUpClick: () => void;
 };
 
+type Data = {
+  value: string;
+  validated: boolean;
+  blurred: boolean;
+};
+
 const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
-  const [email, setEmail] = useState({ value: '', validated: false, blurred: false });
-  const [password, setPassword] = useState({ value: '', validated: false, blurred: false });
+  const [email, setEmail] = useState<Data>({} as Data);
+  const [password, setPassword] = useState<Data>({} as Data);
   const { user, setUser } = useContext(Context);
 
   function handleEmailChange(event: ChangeEvent<HTMLInputElement>) {
     setEmail({ ...email, value: event.target.value });
   }
 
-  function handleEmailBlur(target: string) {
+  function validateEmailOnBlur() {
     const newEmailState = { ...email };
     if (newEmailState.value && /^.+@.+..+$/.test(email.value)) {
       newEmailState.validated = true;
@@ -36,7 +42,7 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
     setPassword({ ...password, value: event.target.value });
   }
 
-  function handlePasswordBlur(target: string) {
+  function validatePasswordOnBlur() {
     const newPasswordState = { ...password };
     if (password.value && password.value.length >= 5) {
       newPasswordState.validated = true;
@@ -47,30 +53,43 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
     setPassword(newPasswordState);
   }
 
-  async function handleLogin(event: FormEvent) {
+  async function handleLogin(event: FormEvent): Promise<void> {
     event.preventDefault();
-    if (email && password) {
-      const response = await login(email.value, password.value);
-      if (response?.ok) {
-        try {
+    validateEmailOnBlur();
+    validatePasswordOnBlur();
+    if (email.validated && password.validated) {
+      try {
+        const response = await login(email.value, password.value);
+        if (response && response.ok && response.json) {
           const data = await response.json();
-          localStorage.setItem('@token', data.token);
-          // TODO: set user data after endpint gets fixed
-          setUser({
-            address: 'Here and there',
-            dob: '1212123',
-            email: 'm@m.com',
-            name: 'Marian',
-            phone: '12341324',
-          });
-        } catch (error) {
-          console.error('Error parsing response', error);
-        } finally {
-          // closeModal();
-          // setEmail('');
-          // setPassword('');
+          if (data && data.token) {
+            localStorage.setItem('@token', data.token);
+            const profile: User = await getLogin();
+            if (profile.name && profile.email) {
+              setUser(profile);
+            }
+          } else {
+            console.error('No token received');
+          }
+        } else {
+          console.error('Login failed');
         }
+      } catch (error) {
+        console.error('Error fetching profile', error);
+      } finally {
+        closeModal();
       }
+    }
+  }
+
+  async function getLogin() {
+    try {
+      const response = await fetchProfile();
+      if (response && response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      console.error('Error parsing response', error);
     }
   }
 
@@ -81,29 +100,35 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
     closeModal();
   }
 
-  console.log(!!user.name);
+  // reinitialize form on close modal
+  useEffect(() => {
+    if (!isOpen) {
+      setEmail({ value: '', validated: false, blurred: false } as Data);
+      setPassword({ value: '', validated: false, blurred: false } as Data);
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} closeModal={closeModal} top={'6.5rem'} right={'35rem'}>
       {!user.name ? (
         <form className={styles.form}>
           <Input
-            onBlur={handleEmailBlur}
+            onBlur={validateEmailOnBlur}
             name="email"
             type="email"
             placeholder="Email"
             value={email.value}
             onChange={handleEmailChange}
-            isValid={email.blurred ? email.validated : true}
+            showError={email.blurred ? !email.validated : false}
           />
           <Input
             name="password"
-            onBlur={handlePasswordBlur}
+            onBlur={validatePasswordOnBlur}
             type="password"
             placeholder="Password"
             value={password.value}
             onChange={handlePasswordChange}
-            isValid={password.blurred ? email.validated : true}
+            showError={password.blurred ? !email.validated : false}
           />
           <div className={styles.infoContainer}>
             <p className={styles.title}>Don't have an account?</p>

@@ -4,14 +4,17 @@ import HeroSection from '@/components/molecules/HeroSection';
 import CardsSection from '@/components/molecules/CardsSection';
 import OffersSection from '@/components/molecules/OffersSection';
 import Footer from '@/components/atoms/Footer';
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Login from '@/components/molecules/Login';
 import 'react-modern-drawer/dist/index.css';
 import SignUpDrawer from '@/components/molecules/SignUpDrawer';
+import { fetchProfile } from '@/app/authAPI';
+import { Context } from '@/components/atoms/Context';
 
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
+  const { setUser } = useContext(Context);
 
   function closeModal(): void {
     setModalOpen(false);
@@ -28,6 +31,23 @@ export default function Home() {
   function closeDrawer(): void {
     setDrawerOpen(false);
   }
+
+  useEffect(() => {
+    async function getLogin() {
+      try {
+        const response = await fetchProfile();
+        if (response && response.ok) {
+          const profile = await response.json();
+          if (profile.name && profile.email) {
+            setUser(profile);
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing response', error);
+      }
+    }
+    getLogin();
+  }, []);
 
   return (
     <div>

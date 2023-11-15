@@ -3,9 +3,9 @@ import React, { createContext, useState, PropsWithChildren, Dispatch, SetStateAc
 export type User = {
   name: string;
   email: string;
-  phone: string;
-  address: string;
-  dob: string;
+  phone?: string;
+  address?: string;
+  dob?: string;
 };
 
 type State = {
