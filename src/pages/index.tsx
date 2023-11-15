@@ -10,11 +10,12 @@ import 'react-modern-drawer/dist/index.css';
 import SignUpDrawer from '@/components/molecules/SignUpDrawer';
 import { fetchProfile } from '@/app/authAPI';
 import { Context } from '@/components/atoms/Context';
+import ErrorBoundary from '@/components/atoms/ErrorBoundary';
 
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const { setUser } = useContext(Context);
+  const { setUser, setError } = useContext(Context);
 
   function closeModal(): void {
     setModalOpen(false);
@@ -44,6 +45,7 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Error parsing response', error);
+        localStorage.removeItem('@token');
       }
     }
     getLogin();
@@ -58,6 +60,7 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head> */}
       <div>
+        <ErrorBoundary />
         <Header
           handleLocationClick={() => console.log('TODO')}
           handleProfileClick={openModal}

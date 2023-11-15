@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useState, FormEvent, FocusEvent } from 'react';
+import React, { ChangeEvent, FC, useState, FormEvent, FocusEvent, useContext } from 'react';
 import Drawer from 'react-modern-drawer';
 import 'react-modern-drawer/dist/index.css';
 import styles from '@/styles/SignUpDrawer.module.css';
@@ -7,6 +7,7 @@ import Input from '../atoms/Input';
 import Button from '../atoms/Button';
 import Filler from '../atoms/Filler';
 import { signup } from '@/app/authAPI';
+import { Context } from '../atoms/Context';
 
 type Props = {
   isOpen: boolean;
@@ -30,6 +31,8 @@ type User = {
 };
 
 const SignUpDrawer: FC<Props> = ({ isOpen, onClose }) => {
+  const { setError } = useContext(Context);
+
   const initialUserState: User = {
     name: { value: '', validated: false, blurred: false },
     email: { value: '', validated: false, blurred: false },
@@ -97,13 +100,24 @@ const SignUpDrawer: FC<Props> = ({ isOpen, onClose }) => {
           const data = await response.json();
           if (data) {
             handleClose();
+          } else {
+            throw new Error('Error parsing response');
           }
+        } else {
+          throw new Error('Error signing up');
         }
       } catch (error) {
         console.error(error);
+        setError({
+          message: 'We could not sign you up. Make sure the information provided is correct.',
+          shouldRefresh: true,
+        });
       }
     } else {
-      console.error('User is not valid');
+      setError({
+        message: 'The information provided is not valid and needs to be modified',
+        shouldRefresh: true,
+      });
     }
   }
 

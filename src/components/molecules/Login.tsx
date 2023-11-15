@@ -21,7 +21,7 @@ type Data = {
 const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
   const [email, setEmail] = useState<Data>({} as Data);
   const [password, setPassword] = useState<Data>({} as Data);
-  const { user, setUser } = useContext(Context);
+  const { user, setUser, setError } = useContext(Context);
 
   function handleEmailChange(event: ChangeEvent<HTMLInputElement>) {
     setEmail({ ...email, value: event.target.value });
@@ -69,13 +69,18 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
               setUser(profile);
             }
           } else {
-            console.error('No token received');
+            throw new Error('Token not found');
           }
         } else {
-          console.error('Login failed');
+          throw new Error('Login failed');
         }
       } catch (error) {
-        console.error('Error fetching profile', error);
+        console.error(error);
+        setError({
+          message:
+            'An error occured when you tried to log in. Make sure your credentials are valid.',
+          shouldRefresh: true,
+        });
       } finally {
         closeModal();
       }
@@ -89,7 +94,7 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
         return await response.json();
       }
     } catch (error) {
-      console.error('Error parsing response', error);
+      throw new Error('Error parsing response');
     }
   }
 
