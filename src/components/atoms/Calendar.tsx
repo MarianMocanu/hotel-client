@@ -13,31 +13,13 @@ type Props = {
 };
 
 const Calendar: FC<Props> = ({ onSelect, selected, isOpen, onClose }) => {
-  const css = `
-  .my-selected:not([disabled]) { 
-    font-weight: bold; 
-    border: 2px solid currentColor;
-  }
-  .my-selected:hover:not([disabled]) { 
-    border-color: blue;
-    color: blue;
-  }
-  .my-today { 
-    font-weight: bold;
-    font-size: 140%; 
-    color: red;
-  }
-`;
   return (
     <Modal isOpen={isOpen} closeModal={onClose} bottom={'5rem'} left={'40rem'}>
-      <style>{css}</style>
       <DayPicker
         mode="range"
         selected={selected}
         onSelect={onSelect}
-        modifiersClassNames={{
-          selected: styles.selected,
-        }}
+        modifiersClassNames={{ selected: styles.selected }}
         footer={<Button text="Select" onClick={onClose} />}
       />
     </Modal>

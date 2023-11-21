@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import styles from '@/styles/HeroSection.module.css';
 import ButtonGroup from '../atoms/ButtonGroup';
 import { FaChevronDown } from 'react-icons/fa';
-import HotelsDrawer from './HotelsDrawer';
-import RoomsDrawer from './RoomsDrawer';
+import HotelsDrawer from '../molecules/HotelsDrawer';
+import RoomsDrawer from '../molecules/RoomsDrawer';
 import { DateRange } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import Calendar from '../atoms/Calendar';
 import { formatDate } from '@/app/util';
+import Button from '../atoms/Button';
 
 type Hotel = {
   _id: string;
@@ -89,8 +90,6 @@ function HeroSection() {
     return result;
   }
 
-  console.log(JSON.stringify(dates, null, 2));
-
   return (
     <section className={styles.imgbg}>
       <div className={styles.card}>
@@ -145,6 +144,10 @@ function HeroSection() {
                 <FaChevronDown />
               </div>
             </div>
+            <Button
+              text="Search"
+              onClick={() => console.log('Should search for available rooms')}
+            />
           </div>
         )}
       </div>

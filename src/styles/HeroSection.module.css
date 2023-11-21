@@ -3,13 +3,13 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  height: 100vh;
+  height: 85vh;
 }
 
 .card {
-  position: absolute;
-  bottom: 5rem;
-  left: 10rem;
+  position: relative;
+  top: 50%;
+  left: 25%;
   max-width: 25rem;
   padding: 20px;
   background-color: white;
