@@ -17,6 +17,15 @@
   cursor: pointer;
 }
 
+.buttonPrimary:hover {
+  background-color: var(--primary-darker);
+}
+
+.buttonPrimary.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .buttonSecondary {
   height: 3.2rem;
   width: 100%;
