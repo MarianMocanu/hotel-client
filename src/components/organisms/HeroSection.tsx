@@ -7,8 +7,9 @@ import RoomsDrawer from '../molecules/RoomsDrawer';
 import { DateRange } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import Calendar from '../atoms/Calendar';
-import { formatDate } from '@/app/util';
+import { formatDate, getGuestsString } from '@/app/util';
 import Button from '../atoms/Button';
+import BookingDrawer from '../molecules/BookingDrawer';
 
 type Hotel = {
   _id: string;
@@ -22,7 +23,7 @@ type Guests = {
   infants: number;
 };
 
-type Drawer = 'hotels' | 'rooms' | 'dates' | 'none';
+type Drawer = 'hotels' | 'rooms' | 'dates' | 'booking' | 'none';
 
 function HeroSection() {
   const tabs = ['Acommodation', 'Meeting & Conference', 'Banquet'];
@@ -61,33 +62,8 @@ function HeroSection() {
     setDates(range);
   }
 
-  function getGuestsString(): string {
-    let result = '';
-    if (guests && guests.adults > 0) {
-      if (guests.adults === 1) {
-        result += guests.adults + ' Adult';
-      } else {
-        result += guests.adults + ' Adults';
-      }
-    }
-    if (guests && guests.kids > 0) {
-      if (guests.kids === 1) {
-        result += ', ' + guests.kids + ' Kid';
-      } else {
-        result += ', ' + guests.kids + ' Kids';
-      }
-    }
-    if (guests && guests.infants > 0) {
-      if (guests.infants === 1) {
-        result += ', ' + guests.infants + ' Infant';
-      } else {
-        result += ', ' + guests.infants + ' Infants';
-      }
-    }
-    if (result === '') {
-      return 'Add guests';
-    }
-    return result;
+  function openBookingDrawer(): void {
+    setDrawerOpen('booking');
   }
 
   return (
@@ -123,7 +99,7 @@ function HeroSection() {
             <div className={`${styles.option} ${styles.border}`} onClick={openRoomsDrawer}>
               <div>
                 <p className={styles.optionLabel}>Guests</p>
-                <p className={styles.optionValue}>{getGuestsString()}</p>
+                <p className={styles.optionValue}>{getGuestsString(guests)}</p>
               </div>
               <FaChevronDown />
             </div>
@@ -144,12 +120,14 @@ function HeroSection() {
                 <FaChevronDown />
               </div>
             </div>
-            <Button
-              text="Search"
-              onClick={() => console.log('Should search for available rooms')}
-            />
+            <Button text="Search" onClick={openBookingDrawer} />
           </div>
         )}
+        <BookingDrawer
+          isOpen={drawerOpen === 'booking'}
+          onClose={handleCloseDrawer}
+          booking={{ dates, guests, hotel }}
+        />
       </div>
     </section>
   );
