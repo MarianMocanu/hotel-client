@@ -1,11 +1,11 @@
 import { Head } from 'next/document';
 import Header from '../components/atoms/Header';
-import HeroSection from '@/components/molecules/HeroSection';
-import CardsSection from '@/components/molecules/CardsSection';
-import OffersSection from '@/components/molecules/OffersSection';
+import HeroSection from '@/components/organisms/HeroSection';
+import CardsSection from '@/components/organisms/CardsSection';
+import OffersSection from '@/components/organisms/OffersSection';
 import Footer from '@/components/atoms/Footer';
 import React, { useEffect, useState, useContext } from 'react';
-import Login from '@/components/molecules/Login';
+import Login from '@/components/molecules/LoginModal';
 import 'react-modern-drawer/dist/index.css';
 import SignUpDrawer from '@/components/molecules/SignUpDrawer';
 import { fetchProfile } from '@/app/authAPI';
