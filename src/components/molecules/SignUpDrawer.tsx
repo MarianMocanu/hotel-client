@@ -1,8 +1,6 @@
 import React, { ChangeEvent, FC, useState, FormEvent, FocusEvent, useContext } from 'react';
-import Drawer from 'react-modern-drawer';
-import 'react-modern-drawer/dist/index.css';
+import Drawer from '@/components/atoms/Drawer';
 import styles from '@/styles/SignUpDrawer.module.css';
-import { FaTimes } from 'react-icons/fa';
 import Input from '../atoms/Input';
 import Button from '../atoms/Button';
 import Filler from '../atoms/Filler';
@@ -126,85 +124,80 @@ const SignUpDrawer: FC<Props> = ({ isOpen, onClose }) => {
   }
 
   return (
-    <Drawer direction="right" open={isOpen} onClose={handleClose} size={'25rem'} zIndex={1001}>
-      <div className={styles.container}>
-        <div className={styles.horizontal}>
-          <p className={styles.title}>Sign up for Comwell Club</p>
-          <div className={styles.icon} onClick={onClose}>
-            <FaTimes size={'1.1rem'} />
-          </div>
-        </div>
-        <p className={styles.info}>
-          Become a member of Comwell Club for free and earn points everytime you stay with us.
-          You'll also receive 25 points when you sign up.
-        </p>
-
-        <form className={styles.form}>
-          <Input
-            value={user.name.value}
-            onChange={handleChange}
-            placeholder="Full name"
-            name="name"
-            type="text"
-            onBlur={validateOnBlur}
-            showError={user.name.blurred ? !user.name.validated : false}
-          />
-          <Input
-            value={user.email.value}
-            onChange={handleChange}
-            placeholder="Email"
-            name="email"
-            type="email"
-            onBlur={validateOnBlur}
-            showError={user.email.blurred ? !user.email.validated : false}
-          />
-          <Input
-            value={user.address.value}
-            onChange={handleChange}
-            placeholder="Address"
-            name="address"
-            onBlur={validateOnBlur}
-            type="text"
-          />
-          <Input
-            value={user.phone.value}
-            onChange={handleChange}
-            placeholder="Phone number"
-            onBlur={validateOnBlur}
-            name="phone"
-            type="text"
-          />
-          <Input
-            value={user.password.value}
-            onChange={handleChange}
-            onBlur={validateOnBlur}
-            placeholder="Password"
-            showError={user.password.blurred ? !user.password.validated : false}
-            name="password"
-            type="password"
-          />
-          <Input
-            value={user.confirmPassword.value}
-            onBlur={validateOnBlur}
-            onChange={handleChange}
-            placeholder="Confirm password"
-            name="confirmPassword"
-            showError={user.confirmPassword.blurred ? !user.confirmPassword.validated : false}
-            type="password"
-          />
-          <Input
-            value={user.dob.value}
-            onChange={handleChange}
-            placeholder="Birthdate"
-            onBlur={validateOnBlur}
-            name="dob"
-            type="date"
-            animated={false}
-          />
-          <Filler />
-          <Button onClick={handleSubmit} text="Sign up" />
-        </form>
-      </div>
+    <Drawer
+      title="Sign up for Comwell Club"
+      subtitle="Become a member of Comwell Club for free and earn points everytime you stay with us.
+      You'll also receive 25 points when you sign up."
+      open={isOpen}
+      onClose={handleClose}
+      size={'25rem'}
+      zIndex={1001}
+    >
+      <form className={styles.form}>
+        <Input
+          value={user.name.value}
+          onChange={handleChange}
+          placeholder="Full name"
+          name="name"
+          type="text"
+          onBlur={validateOnBlur}
+          showError={user.name.blurred ? !user.name.validated : false}
+        />
+        <Input
+          value={user.email.value}
+          onChange={handleChange}
+          placeholder="Email"
+          name="email"
+          type="email"
+          onBlur={validateOnBlur}
+          showError={user.email.blurred ? !user.email.validated : false}
+        />
+        <Input
+          value={user.address.value}
+          onChange={handleChange}
+          placeholder="Address"
+          name="address"
+          onBlur={validateOnBlur}
+          type="text"
+        />
+        <Input
+          value={user.phone.value}
+          onChange={handleChange}
+          placeholder="Phone number"
+          onBlur={validateOnBlur}
+          name="phone"
+          type="text"
+        />
+        <Input
+          value={user.password.value}
+          onChange={handleChange}
+          onBlur={validateOnBlur}
+          placeholder="Password"
+          showError={user.password.blurred ? !user.password.validated : false}
+          name="password"
+          type="password"
+        />
+        <Input
+          value={user.confirmPassword.value}
+          onBlur={validateOnBlur}
+          onChange={handleChange}
+          placeholder="Confirm password"
+          name="confirmPassword"
+          showError={user.confirmPassword.blurred ? !user.confirmPassword.validated : false}
+          type="password"
+        />
+        <Input
+          value={user.dob.value}
+          onChange={handleChange}
+          placeholder="Birthdate"
+          onBlur={validateOnBlur}
+          name="dob"
+          type="date"
+          animated={false}
+        />
+        <Filler />
+        <Button onClick={handleSubmit} text="Sign up" />
+      </form>
     </Drawer>
   );
 };

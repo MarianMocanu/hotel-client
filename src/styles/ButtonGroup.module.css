@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.selectedTab {
+  background-color: var(--primary-color);
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  line-height: 0.9rem;
+  cursor: pointer;
+}
+
+.tab {
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  line-height: 0.9rem;
+  cursor: pointer;
+}
