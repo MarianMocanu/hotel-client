@@ -120,7 +120,12 @@ function HeroSection() {
                 <FaChevronDown />
               </div>
             </div>
-            <Button text="Search" onClick={openBookingDrawer} iconRight={<FaSearch />} />
+            <Button
+              text="Search"
+              onClick={openBookingDrawer}
+              iconRight={<FaSearch />}
+              disabled={!hotel || !guests || !dates?.from || !dates?.to}
+            />
           </div>
         )}
         <BookingDrawer

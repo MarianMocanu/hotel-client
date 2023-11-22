@@ -1,6 +1,5 @@
-import React, { FC, FormEvent, PropsWithChildren, ReactNode } from 'react';
+import React, { FC, FormEvent, ReactNode } from 'react';
 import styles from '@/styles/Button.module.css';
-import { FaSearch } from 'react-icons/fa';
 
 type Props = {
   onClick: (event: FormEvent) => void;
