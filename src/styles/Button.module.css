@@ -12,10 +12,11 @@
   background-color: var(--primary-color);
   border-radius: var(--bton-border);
   border: 1px solid var(--primary-color);
-  color: #fff;
-  font-size: 1.1rem;
   cursor: pointer;
-  letter-spacing: 0.5px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  color: #fff;
 }
 
 .buttonPrimary:hover {
@@ -37,4 +38,17 @@
   color: var(--primary-color);
   font-size: 1.1rem;
   cursor: pointer;
+}
+
+.icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.buttonText {
+  padding: 0 0.5rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from '@/styles/HeroSection.module.css';
 import ButtonGroup from '../atoms/ButtonGroup';
-import { FaChevronDown } from 'react-icons/fa';
+import { FaChevronDown, FaSearch } from 'react-icons/fa';
 import HotelsDrawer from '../molecules/HotelsDrawer';
 import RoomsDrawer from '../molecules/RoomsDrawer';
 import { DateRange } from 'react-day-picker';
@@ -120,7 +120,7 @@ function HeroSection() {
                 <FaChevronDown />
               </div>
             </div>
-            <Button text="Search" onClick={openBookingDrawer} />
+            <Button text="Search" onClick={openBookingDrawer} iconRight={<FaSearch />} />
           </div>
         )}
         <BookingDrawer

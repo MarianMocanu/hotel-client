@@ -7,7 +7,6 @@ import { formatDate, getGuestsString } from '@/app/util';
 import ButtonGroup from '../atoms/ButtonGroup';
 import { fetchAvailableRooms } from '@/app/roomsAPI';
 import { Context } from '../atoms/Context';
-import { set } from 'date-fns';
 
 type Props = {
   onClose: () => void;
