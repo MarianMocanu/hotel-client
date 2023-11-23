@@ -13,6 +13,7 @@ interface Props extends PropsWithChildren {
   zIndex?: number;
   closeButtonVisible?: boolean;
   header?: ReactNode;
+  footer?: ReactNode;
 }
 
 const Drawer: FC<Props> = ({
@@ -25,6 +26,7 @@ const Drawer: FC<Props> = ({
   zIndex,
   closeButtonVisible,
   header,
+  footer,
 }) => {
   return (
     <ModernDrawer direction="right" open={open} onClose={onClose} size={size} zIndex={zIndex}>
@@ -40,6 +42,7 @@ const Drawer: FC<Props> = ({
         </div>
         {subtitle && <p className={styles.info}>{subtitle}</p>}
         {children}
+        {footer && footer}
       </div>
     </ModernDrawer>
   );

@@ -1,0 +1,20 @@
+.selected {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.selected:hover {
+  color: #000;
+}
+
+.content {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding-top: 2.5rem;
+}
+
+.buttonContainer {
+  width: 100%;
+}

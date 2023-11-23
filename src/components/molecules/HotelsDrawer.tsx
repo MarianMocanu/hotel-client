@@ -1,7 +1,7 @@
 import { fetchHotels } from '@/app/hotelsAPI';
-import React, { FC, useEffect, useState, useContext } from 'react';
+import React, { FC, useEffect, useState, useContext, MouseEvent } from 'react';
 import Drawer from '@/components/atoms/Drawer';
-import { Context } from '../atoms/Context';
+import { Context, Hotel } from '../atoms/Context';
 import Image from 'next/image';
 import styles from '@/styles/HotelsDrawer.module.css';
 import { FaCheckCircle } from 'react-icons/fa';
@@ -11,30 +11,23 @@ import Button from '../atoms/Button';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (hotel: Hotel) => void;
 };
 
-type Hotel = {
-  _id: string;
-  name: string;
-  town: string;
-};
-
-const HotelsDrawer: FC<Props> = ({ isOpen, onClose, onSubmit }) => {
-  const { setError } = useContext(Context);
+const HotelsDrawer: FC<Props> = ({ isOpen, onClose }) => {
+  const { setError, setBooking, booking } = useContext(Context);
   const [hotels, setHotels] = useState<Hotel[] | undefined>(undefined);
+  const [selectedHotelId, setSelectedHotelId] = useState<string | undefined>(undefined);
 
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
-
-  function handleOnClick(hotelId: string): void {
-    setSelectedId(hotelId);
+  function handleOnClick(event: MouseEvent): void {
+    const hotelId = event.currentTarget.id;
+    setSelectedHotelId(hotelId);
   }
 
   function handleSubmit(): void {
-    if (hotels && selectedId) {
-      const hotel = hotels.find(hotel => hotel._id === selectedId);
+    if (hotels && selectedHotelId) {
+      const hotel = hotels.find(hotel => hotel._id === selectedHotelId);
       if (hotel) {
-        onSubmit(hotel);
+        setBooking({ ...booking, hotel });
         onClose();
       }
     }
@@ -70,40 +63,41 @@ const HotelsDrawer: FC<Props> = ({ isOpen, onClose, onSubmit }) => {
         hotels.map(hotel => (
           <HotelCard
             key={hotel._id}
-            name={hotel.name}
-            town={hotel.town}
-            selected={selectedId === hotel._id}
-            onClick={() => handleOnClick(hotel._id)}
+            data={hotel}
+            selected={selectedHotelId === hotel._id}
+            onClick={handleOnClick}
           />
         ))}
       <Filler />
-      <div className={styles.buttonContainer}>
-        <Button text="Select" onClick={handleSubmit} disabled={!selectedId} />
-      </div>
+      <Button text="Select" onClick={handleSubmit} disabled={!selectedHotelId} />
     </Drawer>
   );
 };
+export default HotelsDrawer;
 
-type CardProps = {
-  town: string;
-  name: string;
+type HotelCardProps = {
+  data: Hotel;
   selected: boolean;
-  onClick?: () => void;
+  onClick: (event: MouseEvent) => void;
 };
 
-const HotelCard: FC<CardProps> = ({ town, name, selected, onClick }) => {
+const HotelCard: FC<HotelCardProps> = ({ data, selected, onClick }) => {
   return (
-    <div className={`${styles.container} ${selected ? styles.selected : ''}`} onClick={onClick}>
+    <div
+      className={`${styles.container} ${selected ? styles.selected : ''}`}
+      onClick={onClick}
+      id={data._id}
+    >
       <Image
-        src={`/hotels/${town}.webp`}
+        src={`/hotels/${data.town}.webp`}
         alt="image"
         width={100}
         height={80}
         className={styles.image}
       />
       <div className={styles.column}>
-        <p className={styles.name}>{name}</p>
-        <p className={styles.town}>{town}</p>
+        <p className={styles.name}>{data.name}</p>
+        <p className={styles.town}>{data.town}</p>
       </div>
       <Filler />
       {selected && (
@@ -114,5 +108,3 @@ const HotelCard: FC<CardProps> = ({ town, name, selected, onClick }) => {
     </div>
   );
 };
-
-export default HotelsDrawer;

@@ -1,8 +1,0 @@
-.selected {
-  background-color: var(--primary-color);
-  color: #fff;
-}
-
-.selected:hover {
-  color: #000;
-}
