@@ -6,7 +6,7 @@ import HotelsDrawer from '../molecules/HotelsDrawer';
 import GuestsDrawer from '../molecules/GuestsDrawer';
 import 'react-day-picker/dist/style.css';
 import CalendarDrawer from '../molecules/CalendarDrawer';
-import { formatDate, getGuestsString } from '@/app/util';
+import { formatDate } from '@/app/util';
 import Button from '../atoms/Button';
 import BookingDrawer from '../molecules/BookingDrawer';
 import { Context } from '../atoms/Context';

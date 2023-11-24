@@ -17,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const { setUser, setError } = useContext(Context);
+  const { setUser } = useContext(Context);
 
   function closeModal(): void {
     setModalOpen(false);

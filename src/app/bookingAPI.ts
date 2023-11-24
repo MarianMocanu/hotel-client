@@ -14,7 +14,7 @@ export type BookingObject = {
   totalAmount?: number;
 };
 
-export const createBooking = async (booking: any) => {
+export const createBooking = async (booking: BookingObject) => {
   try {
     const response = await fetch('http://localhost:4200/bookings', {
       method: 'POST',
