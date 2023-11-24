@@ -13,6 +13,7 @@ import Filler from '../atoms/Filler';
 import GuestForm from './GuestForm';
 import Image from 'next/image';
 import { BookingObject, createBooking } from '@/app/bookingAPI';
+import { toast } from 'react-toastify';
 
 type Props = {
   isOpen: boolean;
@@ -31,8 +32,8 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   function handleOnBackClick(): void {
     if (step === 1) {
       setStep(0);
-    } else if (booking?.room) {
-      // setBooking({ ...booking, room: {} });
+    } else if (booking?.room.name) {
+      setBooking({ ...booking, room: {} as Room });
     } else {
       handleOnDrawerClose();
     }
@@ -71,14 +72,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           if (response && response.ok) {
             const createdBooking = await response.json();
             if (createdBooking && createdBooking._id) {
-              // TODO: add success toast
-              // close all drawers and reset
-              console.log(createdBooking);
-              setStep(0);
-              setTab('rooms');
-              setRooms([] as Room[]);
-              setBooking({} as Booking);
-              onClose();
+              toast.success('Your booking was created successfully!');
             }
           } else {
             throw new Error('Booking could not be created');
@@ -86,6 +80,12 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         } catch (error) {
           console.error('Error creating booking', error);
           setError({ message: 'Error creating booking', shouldRefresh: false });
+        } finally {
+          setStep(0);
+          setTab('rooms');
+          setRooms([] as Room[]);
+          setBooking({} as Booking);
+          onClose();
         }
       }
     } else if (booking.room._id) {
@@ -96,7 +96,6 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   function handleOnDrawerClose(): void {
     setTab('rooms');
     setRooms([]);
-    setBooking({} as Booking);
     onClose();
   }
 
@@ -194,13 +193,15 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           <div className={styles.flex}>
             <GuestForm />
           </div>
-          <Image
-            src={`/rooms/${booking.room.type}.webp`}
-            alt="hotel"
-            width={350}
-            height={200}
-            className={styles.flex}
-          />
+          {booking.room && (
+            <Image
+              src={`/rooms/${booking.room.type}.webp`}
+              alt="hotel"
+              width={350}
+              height={200}
+              className={styles.flex}
+            />
+          )}
         </div>
       )}
     </Drawer>
@@ -249,25 +250,23 @@ type DrawerFooterProps = {
 };
 const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled }) => {
   const { booking } = useContext(Context);
-  return (
-    <div className={styles.footer}>
-      {booking.room && booking.checkin && booking.checkout && (
+  if (booking.room && booking.room.name && booking.checkin && booking.checkout && booking.price) {
+    return (
+      <div className={styles.footer}>
         <div className={styles.footerText}>
           {booking.room.name} for {differenceInDays(booking.checkout, booking.checkin)}
           {' nights'}
         </div>
-      )}
-      <Filler />
-      {booking.price && (
+        <Filler />
         <div className={styles.footerText}>{booking.price.toLocaleString('de-DE')} kr.</div>
-      )}
-      <div className={styles.buttonContainer}>
-        <Button
-          onClick={onNextClick}
-          text={step === 0 ? 'Select' : 'Book your stay'}
-          disabled={nextDisabled}
-        />
+        <div className={styles.buttonContainer}>
+          <Button
+            onClick={onNextClick}
+            text={step === 0 ? 'Select' : 'Book your stay'}
+            disabled={nextDisabled}
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 };

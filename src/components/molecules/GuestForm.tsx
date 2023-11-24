@@ -15,7 +15,7 @@ type Form = {
 };
 
 const GuestForm: FC = () => {
-  const { booking, setBooking } = useContext(Context);
+  const { booking, setBooking, user } = useContext(Context);
   const [form, setForm] = useState<Form>({
     name: { value: '', valid: false, blurred: false },
     email: { value: '', valid: false, blurred: false },
@@ -51,11 +51,11 @@ const GuestForm: FC = () => {
   }
 
   useEffect(() => {
-    if (booking.guest.name && booking.guest.email && booking.guest.phone) {
+    if (user.email && user.name && user.phone) {
       setForm({
-        name: { value: booking.guest.name, valid: true, blurred: false },
-        email: { value: booking.guest.email, valid: true, blurred: false },
-        phone: { value: booking.guest.phone, valid: true, blurred: false },
+        name: { value: user.name, valid: true, blurred: false },
+        email: { value: user.email, valid: true, blurred: false },
+        phone: { value: user.phone, valid: true, blurred: false },
       });
     }
   }, []);
