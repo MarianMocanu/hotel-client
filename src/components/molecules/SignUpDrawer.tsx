@@ -6,6 +6,7 @@ import Button from '../atoms/Button';
 import Filler from '../atoms/Filler';
 import { signup } from '@/app/authAPI';
 import { Context } from '../atoms/Context';
+import { toast } from 'react-toastify';
 
 type Props = {
   isOpen: boolean;
@@ -97,7 +98,7 @@ const SignUpDrawer: FC<Props> = ({ isOpen, onClose }) => {
         if (response && response.ok) {
           const data = await response.json();
           if (data) {
-            handleClose();
+            toast.success('Your account was created successfully!');
           } else {
             throw new Error('Error parsing response');
           }
@@ -110,6 +111,8 @@ const SignUpDrawer: FC<Props> = ({ isOpen, onClose }) => {
           message: 'We could not sign you up. Make sure the information provided is correct.',
           shouldRefresh: true,
         });
+      } finally {
+        handleClose();
       }
     } else {
       setError({

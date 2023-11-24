@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+  margin: 1rem 0;
+}
+
+.border {
+  border: 1px solid var(--secondary-darker);
+  border-radius: 10px;
+}
+
+.border.selected {
+  border: 1px solid var(--primary-color);
+}
+
+.border:hover {
+  border: 1px solid #000;
+  cursor: pointer;
+}
+
+.vertical {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+}
+
+.picture {
+  border-radius: 10px;
+  padding-right: 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  padding: 0.75rem 0;
+}
+
+.description {
+  line-height: 1.2em;
+  max-height: 2.4em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1rem;
+}
+
+.facilities {
+  padding: 1rem 0;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  line-height: 1.1rem;
+  max-height: 2.2rem;
+  overflow: hidden;
+}
+
+.facility {
+  font-size: 0.8rem;
+  padding-right: 0.5rem;
+}
+
+.price {
+  font-size: 1.5rem;
+}

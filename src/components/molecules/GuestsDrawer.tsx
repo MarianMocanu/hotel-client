@@ -1,14 +1,15 @@
-import React, { FC, useState, MouseEvent } from 'react';
+import React, { FC, useState, MouseEvent, useContext } from 'react';
 import Drawer from '../atoms/Drawer';
 import { FaMinus, FaPlus } from 'react-icons/fa';
-import styles from '@/styles/RoomsDrawer.module.css';
+import styles from '@/styles/GuestsDrawer.module.css';
 import Button from '../atoms/Button';
 import Filler from '../atoms/Filler';
+import { Context, Guest } from '../atoms/Context';
+import { getGuestsString } from '@/app/util';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (guests: Guests) => void;
 };
 
 type Guests = {
@@ -17,7 +18,8 @@ type Guests = {
   infants: number;
 };
 
-const RoomsDrawer: FC<Props> = ({ onClose, isOpen, onSubmit }) => {
+const GuestsDrawer: FC<Props> = ({ onClose, isOpen }) => {
+  const { booking, setBooking } = useContext(Context);
   const [guests, setGuests] = useState<Guests>({ adults: 1, kids: 0, infants: 0 } as Guests);
 
   function increment(event: MouseEvent): void {
@@ -44,7 +46,13 @@ const RoomsDrawer: FC<Props> = ({ onClose, isOpen, onSubmit }) => {
 
   function handleSubmit(): void {
     if (guests.adults > 0) {
-      onSubmit(guests);
+      const newBooking = { ...booking };
+      if (!newBooking.guest) {
+        newBooking.guest = {} as Guest;
+      }
+      newBooking.guest.guestsString = getGuestsString(guests);
+      newBooking.guest.numberOfGuests = guests.adults;
+      setBooking(newBooking);
       onClose();
     }
   }
@@ -118,4 +126,4 @@ const RoomsDrawer: FC<Props> = ({ onClose, isOpen, onSubmit }) => {
     </Drawer>
   );
 };
-export default RoomsDrawer;
+export default GuestsDrawer;

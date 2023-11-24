@@ -1,10 +1,10 @@
-import React, { FC, Dispatch, SetStateAction } from 'react';
+import React, { FC, MouseEvent } from 'react';
 import styles from '@/styles/ButtonGroup.module.css';
 
 type Props = {
   text: string[];
-  onButtonClick: Dispatch<SetStateAction<number>>;
-  selected: number;
+  onButtonClick: (event: MouseEvent) => void;
+  selected: string;
 };
 
 const ButtonGroup: FC<Props> = ({ text, selected, onButtonClick }) => {
@@ -12,9 +12,12 @@ const ButtonGroup: FC<Props> = ({ text, selected, onButtonClick }) => {
     <div className={styles.container}>
       {text.map((item, index) => (
         <div
-          className={index === selected ? styles.selectedTab : styles.tab}
+          className={
+            text[index].toLowerCase() === selected.toLowerCase() ? styles.selectedTab : styles.tab
+          }
           key={index}
-          onClick={() => onButtonClick(index)}
+          onClick={onButtonClick}
+          id={text[index]}
         >
           {item}
         </div>

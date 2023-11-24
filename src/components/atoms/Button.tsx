@@ -1,4 +1,4 @@
-import React, { FC, FormEvent } from 'react';
+import React, { FC, FormEvent, ReactNode } from 'react';
 import styles from '@/styles/Button.module.css';
 
 type Props = {
@@ -6,9 +6,11 @@ type Props = {
   text: string;
   secondary?: boolean;
   disabled?: boolean;
+  iconLeft?: ReactNode;
+  iconRight?: ReactNode;
 };
 
-const Button: FC<Props> = ({ onClick, text, secondary, disabled }) => {
+const Button: FC<Props> = ({ onClick, text, secondary, disabled, iconLeft, iconRight }) => {
   function getButtonStyle() {
     if (secondary) {
       return styles.buttonSecondary;
@@ -21,13 +23,11 @@ const Button: FC<Props> = ({ onClick, text, secondary, disabled }) => {
 
   return (
     <div className={styles.container}>
-      <input
-        className={getButtonStyle()}
-        type="submit"
-        value={text}
-        onClick={onClick}
-        disabled={disabled}
-      />
+      <button className={getButtonStyle()} type="submit" onClick={onClick} disabled={disabled}>
+        {iconLeft && iconLeft}
+        <p className={styles.buttonText}>{text}</p>
+        {iconRight && iconRight}
+      </button>
     </div>
   );
 };
