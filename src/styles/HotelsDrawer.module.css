@@ -1,0 +1,40 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 1rem 0;
+  border: 1px solid var(--secondary-darker);
+  border-radius: 5px;
+}
+
+.container.selected {
+  border: 1px solid #000;
+}
+
+.container:hover {
+  cursor: pointer;
+  border: 1px solid gray;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.image {
+  border-radius: 5px;
+  padding-right: 1rem;
+}
+
+.name {
+  font-size: 1.15rem;
+}
+
+.town {
+  font-size: 1rem;
+  color: gray;
+}
+
+.icon {
+  margin-right: 1rem;
+}

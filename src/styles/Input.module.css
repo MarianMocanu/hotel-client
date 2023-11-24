@@ -1,6 +1,6 @@
 .inputContainer {
   position: relative;
-  border: 1px solid var(--secondary-darker);
+  border: 1px solid lightgray;
   padding: 0 1rem;
   margin: 0.5rem 0;
   height: 3.5rem;

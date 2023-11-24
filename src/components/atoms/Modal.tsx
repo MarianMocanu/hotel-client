@@ -6,9 +6,11 @@ interface Props extends PropsWithChildren {
   closeModal: () => void;
   top?: number | string;
   right?: number | string;
+  bottom?: number | string;
+  left?: number | string;
 }
 
-const Modal: FC<Props> = ({ closeModal, isOpen, children, top, right }) => {
+const Modal: FC<Props> = ({ closeModal, isOpen, children, top, right, left, bottom }) => {
   const handleClickOutside: any = (event: MouseEvent) => {
     if (event.target === event.currentTarget) {
       closeModal();
@@ -30,7 +32,12 @@ const Modal: FC<Props> = ({ closeModal, isOpen, children, top, right }) => {
     <div className={styles.modalContainer} onClick={handleClickOutside}>
       <div
         className={styles.modalContent}
-        style={{ top: top ?? undefined, right: right ?? undefined }}
+        style={{
+          top: top ?? undefined,
+          right: right ?? undefined,
+          bottom: bottom ?? undefined,
+          left: left ?? undefined,
+        }}
       >
         {children}
       </div>
