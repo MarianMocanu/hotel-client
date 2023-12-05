@@ -12,6 +12,7 @@ export type BookingObject = {
   };
   guestsAmount: number;
   totalAmount?: number;
+  services: string[]
 };
 
 export const createBooking = async (booking: BookingObject) => {

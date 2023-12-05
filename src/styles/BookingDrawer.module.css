@@ -51,6 +51,7 @@
 .overview {
   flex-direction: row;
   display: flex;
+  gap: 1rem;
 }
 
 .flex {
