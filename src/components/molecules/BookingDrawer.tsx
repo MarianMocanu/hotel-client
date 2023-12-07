@@ -6,7 +6,6 @@ import {
   FaCalendarAlt,
   FaUser,
   FaMapMarkerAlt,
-  FaCheckCircle,
 } from 'react-icons/fa';
 import { formatDate } from '@/app/util';
 import ButtonGroup from '../atoms/ButtonGroup';
@@ -22,7 +21,7 @@ import { BookingObject, createBooking } from '@/app/bookingAPI';
 import { toast } from 'react-toastify';
 import RoomInfoDrawer from './RoomInfoDrawer';
 import { PackageCard } from '../atoms/PackageCard';
-import Summary from '../atoms/Summary';
+import Summary from './Summary';
 
 type Props = {
   isOpen: boolean;
@@ -107,7 +106,6 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           setTab('rooms');
           setRooms([] as Room[]);
           setBooking({} as Booking);
-          // setSelectedPackage(defaultPackage);
           onClose();
         }
       }
