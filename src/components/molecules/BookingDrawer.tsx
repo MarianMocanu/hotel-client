@@ -1,12 +1,7 @@
 import React, { FC, useContext, useEffect, useState, MouseEvent } from 'react';
 import Drawer from '../atoms/Drawer';
 import styles from '@/styles/BookingDrawer.module.css';
-import {
-  FaChevronLeft,
-  FaCalendarAlt,
-  FaUser,
-  FaMapMarkerAlt,
-} from 'react-icons/fa';
+import { FaChevronLeft, FaCalendarAlt, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
 import { formatDate } from '@/app/util';
 import ButtonGroup from '../atoms/ButtonGroup';
 import { fetchAvailableRooms } from '@/app/roomsAPI';
@@ -28,8 +23,6 @@ type Props = {
   onClose: () => void;
 };
 
-
-
 const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   const { setError, booking, setBooking } = useContext(Context);
 
@@ -50,6 +43,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       setBooking({ ...booking, room: {} as Room, package: null });
     } else if (step === 2) {
       setStep(1);
+      setSelectedAddons([] as Service[]);
       setBooking({ ...booking, addons: [] as Service[] });
     } else if (step === 3) {
       setStep(2);
@@ -141,11 +135,17 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
 
   function handleAddonChange(service: Service): void {
     if (selectedAddons.some(addon => addon._id === service._id)) {
-      setSelectedAddons(prevAddons => prevAddons.filter(addon => addon._id !== service._id));
-      setBooking({ ...booking, addons: selectedAddons });
+      setSelectedAddons(prevAddons => {
+        const newAddons = prevAddons.filter(addon => addon._id !== service._id);
+        setBooking({ ...booking, addons: newAddons });
+        return newAddons;
+      });
     } else {
-      setSelectedAddons(prevAddons => [...prevAddons, service]);
-      setBooking({ ...booking, addons: selectedAddons });
+      setSelectedAddons(prevAddons => {
+        const newAddons = [...prevAddons, service];
+        setBooking({ ...booking, addons: newAddons });
+        return newAddons;
+      });
     }
     console.log(selectedAddons, booking.addons);
   }
@@ -268,16 +268,16 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
             <GuestForm />
           </div>
           <div className={styles.summarycontainer}>
-          {booking.room && (
-            <Image
-              src={`/rooms/${booking.room.type}.webp`}
-              alt="hotel"
-              width={350}
-              height={200}
-              className={styles.flex}
-            />
-          )}
-          <Summary />
+            {booking.room && (
+              <Image
+                src={`/rooms/${booking.room.type}.webp`}
+                alt="hotel"
+                width={350}
+                height={200}
+                className={styles.flex}
+              />
+            )}
+            <Summary />
           </div>
         </div>
       )}
@@ -328,8 +328,9 @@ type DrawerFooterProps = {
 const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled }) => {
   const { booking } = useContext(Context);
   const subtotal =
-    (booking.price +( (booking.package ? booking.package.price : 0)) *
-      differenceInDays(booking.checkout, booking.checkin)) +
+    booking.price +
+    (booking.package ? booking.package.price : 0) *
+      differenceInDays(booking.checkout, booking.checkin) +
     (booking.addons ? booking.addons.reduce((acc, addon) => acc + addon.price, 0) : 0);
 
   if (booking.room && booking.room.name && booking.checkin && booking.checkout && booking.price) {
