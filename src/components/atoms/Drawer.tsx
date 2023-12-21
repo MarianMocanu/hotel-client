@@ -33,7 +33,7 @@ const Drawer: FC<Props> = ({
       <div className={styles.container}>
         {header && header}
         <div className={styles.horizontal}>
-          <p className={styles.title}>{title}</p>
+          {title !== '' && <p className={styles.title}>{title}</p>}
           {closeButtonVisible && (
             <div className={styles.icon} onClick={onClose}>
               <FaTimes size={'1.1rem'} />

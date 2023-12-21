@@ -1,0 +1,88 @@
+.overview {
+    flex-direction: row;
+    display: flex;
+    gap: 1rem;
+  }
+
+.flex {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    border-radius: 10px;
+  }
+
+
+  .roomHeader {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 2rem 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .subtitle {
+    margin: 1rem 1rem 1.5rem 1rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+  }
+
+  .grid {
+    margin-top: 1rem;
+    padding-inline: 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .container {
+    text-transform: capitalize;
+    padding: 1rem;
+    display: flex;
+    gap:1rem;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    /* margin: 1rem 0; */
+    border: 1px solid var(--secondary-darker);
+    border-radius: 5px;
+  }
+
+  .facilitiesgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .facility {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: capitalize;
+  }
+
+  .name {
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .price {
+    font-size: 1.6rem;
+  }
+  
+  
+  .container.selected {
+    border: 1px solid #000;
+  }
+  
+  .container:hover {
+    cursor: pointer;
+    border: 1px solid gray;
+  }

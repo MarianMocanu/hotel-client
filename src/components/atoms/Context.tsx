@@ -42,6 +42,13 @@ export type Guest = {
   guestsString: string;
 };
 
+export type Service = {
+  _id: string;
+  title: string;
+  price: number;
+  type: string;
+};
+
 export type Booking = {
   hotel: Hotel;
   room: Room;
@@ -49,6 +56,8 @@ export type Booking = {
   checkin: Date;
   checkout: Date;
   price: number;
+  package: Service | null;
+  addons: Service[];
 };
 
 type State = {
