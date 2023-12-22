@@ -60,6 +60,22 @@ export type Booking = {
   addons: Service[];
 };
 
+export type EventBooking = {
+  hotel_name: string;
+  hotel_id: string;
+  venue_id: string;
+  date: Date;
+  start_time: string;
+  end_time: string;
+  type: string;
+  host_name: string;
+  email: string;
+  phone: string;
+  guest_amount: number;
+  corporation: string;
+  comments: string;
+}
+
 type State = {
   user: User;
   setUser: Dispatch<SetStateAction<User>>;
@@ -67,6 +83,8 @@ type State = {
   setError: Dispatch<SetStateAction<Error | null>>;
   booking: Booking;
   setBooking: Dispatch<SetStateAction<Booking>>;
+  eventBooking: EventBooking;
+  setEventBooking: Dispatch<SetStateAction<EventBooking>>;
 };
 
 type Error = {
@@ -80,6 +98,7 @@ export const ContextProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState({} as User);
   const [error, setError] = useState<Error | null>(null);
   const [booking, setBooking] = useState({} as Booking);
+  const [eventBooking, setEventBooking] = useState({} as EventBooking);
 
   const contextValue = {
     user,
@@ -88,6 +107,8 @@ export const ContextProvider = ({ children }: PropsWithChildren) => {
     setError,
     booking,
     setBooking,
+    eventBooking,
+    setEventBooking
   };
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;

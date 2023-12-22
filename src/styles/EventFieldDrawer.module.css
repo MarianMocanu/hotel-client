@@ -1,0 +1,17 @@
+.timeslot {
+  color: #182b398a;
+  cursor: pointer;
+}
+
+.timeslot:hover {
+  color: var(--primary-darker);
+}
+
+.selected {
+  color: var(--primary-darker);
+}
+
+
+.eventType {
+    font-size: 1.4rem;
+}

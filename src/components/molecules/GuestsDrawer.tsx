@@ -10,6 +10,7 @@ import { getGuestsString } from '@/app/util';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  isEvent: boolean;
 };
 
 type Guests = {
@@ -18,7 +19,7 @@ type Guests = {
   infants: number;
 };
 
-const GuestsDrawer: FC<Props> = ({ onClose, isOpen }) => {
+const GuestsDrawer: FC<Props> = ({ onClose, isOpen, isEvent }) => {
   const { booking, setBooking } = useContext(Context);
   const [guests, setGuests] = useState<Guests>({ adults: 1, kids: 0, infants: 0 } as Guests);
 
