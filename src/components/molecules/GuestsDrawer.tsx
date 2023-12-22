@@ -85,7 +85,7 @@ const GuestsDrawer: FC<Props> = ({ onClose, isOpen }) => {
   return (
     <Drawer onClose={onClose} open={isOpen} title="Guests & Rooms" size={'25rem'} zIndex={1001}>
       {roomGuests.map((guests, index) => (
-        <div className={styles.content}>
+        <div className={styles.content} key={index.toString()}>
           <div className={`${styles.horizontal} ${styles.justify}`}>
             <p>Adults</p>
             <div className={styles.horizontal} datatype="adults" id={index.toString()}>

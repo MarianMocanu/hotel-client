@@ -1,6 +1,7 @@
 export const fetchAvailableRooms = async (data: {
   hotelId: string;
-  guestsAmount: number;
+  numberOfRooms: number;
+  numberOfGuests: number;
   checkinDate: Date;
   checkoutDate: Date;
 }) => {

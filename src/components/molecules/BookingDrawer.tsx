@@ -145,11 +145,11 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           hotelId: booking.hotel._id,
           checkinDate: booking.checkin,
           checkoutDate: booking.checkout,
-          guestsAmount: 2,
+          numberOfRooms: booking.rooms.length,
+          numberOfGuests: booking.guest.numberOfGuests,
         });
         if (response && response.ok) {
           const parsedResponse = await response.json();
-          console.log(parsedResponse);
           if (parsedResponse.rooms) {
             setRooms(getUniqueRoomTypes(parsedResponse.rooms));
             setServices(getUniqueServices(parsedResponse.hotel_services));
@@ -169,9 +169,9 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       booking.hotel._id &&
       booking.checkin &&
       booking.checkout &&
-      booking.rooms[0].guest &&
-      rooms.length === 0
+      booking.rooms.length > 0
     ) {
+      // console.log(JSON.stringify(booking, null, 2));
       getRooms();
     }
   }, [isOpen]);
