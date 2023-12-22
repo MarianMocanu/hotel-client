@@ -3,9 +3,8 @@ import Drawer from '../atoms/Drawer';
 import styles from '@/styles/BookingDrawer.module.css';
 import { FaChevronLeft, FaCalendarAlt, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
 import { formatDate } from '@/app/util';
-import ButtonGroup from '../atoms/ButtonGroup';
 import { fetchAvailableRooms } from '@/app/roomsAPI';
-import { Booking, Context, Room, Service } from '../atoms/Context';
+import { BookedRoom, Booking, Context, Room, Service } from '../atoms/Context';
 import RoomCard from './RoomCard';
 import { differenceInDays } from 'date-fns';
 import Button from '../atoms/Button';
@@ -26,11 +25,8 @@ type Props = {
 const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   const { setError, booking, setBooking } = useContext(Context);
 
-  const tabs = ['Rooms', 'Packages'];
-
   // steps index: 0: choose room, 1: choose package, 2: addons ,  3:guest info
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
-  const [tab, setTab] = useState<'rooms' | 'packages'>('rooms');
   const [rooms, setRooms] = useState<Room[]>([] as Room[]);
   const [services, setServices] = useState<Service[]>([] as Service[]);
   const [selectedAddons, setSelectedAddons] = useState<Service[]>([] as Service[]);
@@ -40,7 +36,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       handleOnDrawerClose();
     } else if (step === 1) {
       setStep(0);
-      setBooking({ ...booking, room: {} as Room, package: null });
+      setBooking({ ...booking, rooms: [] as BookedRoom[], package: null });
     } else if (step === 2) {
       setStep(1);
       setSelectedAddons([] as Service[]);
@@ -54,34 +50,25 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     return (
       !!booking.checkin &&
       !!booking.checkout &&
-      !!booking.guest.email &&
-      !!booking.guest.name &&
-      !!booking.guest.phone &&
-      !!booking.guest.numberOfGuests &&
+      !!booking.rooms &&
+      !!booking.rooms[0].guest &&
       !!booking.hotel._id &&
-      !!booking.room._id
+      booking.rooms.length > 0
     );
   }
 
   async function handleOnNextClick(): Promise<void> {
+    const newBooking: BookingObject = {} as BookingObject;
     if (step === 3) {
       if (isBookingReadyToBeCreated()) {
-        const newBooking: BookingObject = {
-          checkinDate: booking.checkin,
-          checkoutDate: booking.checkout,
-          guestInfo: {
-            email: booking.guest.email,
-            name: booking.guest.name,
-            phone: booking.guest.phone,
-          },
-          hotel_id: booking.hotel._id,
-          room_id: booking.room._id,
-          guestsAmount: booking.guest.numberOfGuests,
-          services: [
-            ...booking.addons.map(service => service._id),
-            ...(booking.package !== null ? [booking.package._id] : []),
-          ],
-        };
+        newBooking.checkinDate = booking.checkin;
+        newBooking.checkoutDate = booking.checkout;
+        newBooking.hotel_id = booking.hotel._id;
+        newBooking.services = [
+          ...booking.addons.map(service => service._id),
+          ...(booking.package !== null ? [booking.package._id] : []),
+        ];
+        // add rooms and guest
         try {
           const response = await createBooking(newBooking);
           if (response && response.ok) {
@@ -96,8 +83,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           console.error('Error creating booking', error);
           setError({ message: 'Error creating booking', shouldRefresh: false });
         } finally {
-          setStep(1);
-          setTab('rooms');
+          setStep(0);
           setRooms([] as Room[]);
           setBooking({} as Booking);
           onClose();
@@ -109,14 +95,8 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   }
 
   function handleOnDrawerClose(): void {
-    setTab('rooms');
     setRooms([]);
     onClose();
-  }
-
-  function handleOnTabClick(event: MouseEvent): void {
-    const tab = event.currentTarget.id;
-    setTab(tab as 'rooms' | 'packages');
   }
 
   function handleOnRoomClick(event: MouseEvent): void {
@@ -124,11 +104,10 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     const room = rooms.find(room => room._id === roomId);
     if (room) {
       const newBooking = { ...booking };
-      newBooking.room = room;
+      // newBooking.rooms.push(room);
       newBooking.price = room.price * differenceInDays(newBooking.checkout, newBooking.checkin);
       newBooking.package = null;
       setBooking(newBooking);
-      console.log(newBooking);
       setStep(1);
     }
   }
@@ -147,7 +126,6 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         return newAddons;
       });
     }
-    console.log(selectedAddons, booking.addons);
   }
 
   function getUniqueRoomTypes(rooms: Room[]): Room[] {
@@ -167,7 +145,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           hotelId: booking.hotel._id,
           checkinDate: booking.checkin,
           checkoutDate: booking.checkout,
-          guestsAmount: booking.guest.numberOfGuests,
+          guestsAmount: 2,
         });
         if (response && response.ok) {
           const parsedResponse = await response.json();
@@ -191,7 +169,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       booking.hotel._id &&
       booking.checkin &&
       booking.checkout &&
-      booking.guest.numberOfGuests &&
+      booking.rooms[0].guest &&
       rooms.length === 0
     ) {
       getRooms();
@@ -206,7 +184,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         step === 0
           ? 'Choose room'
           : step === 2
-          ? 'Additional Purchase Options'
+          ? 'Additional services'
           : step === 3
           ? 'Guest information'
           : ''
@@ -225,24 +203,21 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     >
       {step === 0 && (
         <div className={styles.content}>
-          <ButtonGroup text={tabs} onButtonClick={handleOnTabClick} selected={tab} />
-          {tab === 'rooms' &&
+          {step === 0 &&
             rooms.length > 0 &&
             rooms.map((room, index) => (
               <RoomCard
                 data={room}
                 onClick={handleOnRoomClick}
                 key={index}
-                selected={booking.room ? booking.room._id === room._id : false}
                 nights={differenceInDays(booking.checkout, booking.checkin)}
               />
             ))}
         </div>
       )}
-      {tab === 'rooms' && step === 1 && <RoomInfoDrawer services={services} />}
-
+      {step === 1 && <RoomInfoDrawer services={services} />}
       {/* addons page */}
-      {tab === 'rooms' && step === 2 && (
+      {step === 2 && (
         <div className={styles.grid}>
           {services.length > 0 &&
             services.map((service, index) => {
@@ -261,16 +236,15 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
             })}
         </div>
       )}
-
-      {tab === 'rooms' && step === 3 && (
+      {step === 3 && (
         <div className={styles.overview}>
           <div className={styles.flex}>
             <GuestForm />
           </div>
           <div className={styles.summarycontainer}>
-            {booking.room && (
+            {booking.rooms[0] && (
               <Image
-                src={`/rooms/${booking.room.type}.webp`}
+                src={`/rooms/${booking.rooms[0].room.type}.webp`}
                 alt="hotel"
                 width={350}
                 height={200}
@@ -308,7 +282,7 @@ const DrawerHeader: FC<DrawerHeaderProps> = ({ onBackClick }) => {
         <div className={styles.icon}>
           <FaUser />
         </div>
-        <p>{booking.guest?.guestsString}</p>
+        <p>{booking.rooms && booking.rooms[0].guest ? booking.rooms[0].guest.guestsString : ''}</p>
       </div>
       <div className={styles.horizontal}>
         <div className={styles.icon}>
@@ -333,11 +307,17 @@ const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled }
       differenceInDays(booking.checkout, booking.checkin) +
     (booking.addons ? booking.addons.reduce((acc, addon) => acc + addon.price, 0) : 0);
 
-  if (booking.room && booking.room.name && booking.checkin && booking.checkout && booking.price) {
+  if (
+    booking.rooms &&
+    booking.rooms.length > 0 &&
+    booking.checkin &&
+    booking.checkout &&
+    booking.price
+  ) {
     return (
       <div className={styles.footer}>
         <div className={styles.footerText}>
-          {booking.room.name} for {differenceInDays(booking.checkout, booking.checkin)}
+          {booking.rooms[0].room.name} for {differenceInDays(booking.checkout, booking.checkin)}
           {' nights'}
         </div>
         <Filler />

@@ -12,27 +12,20 @@ type Guests = {
   kids: number;
   infants: number;
 };
-export const getGuestsString = (guests: Guests | undefined): string => {
+export const getGuestsString = (guests: Guests[] | undefined): string => {
   let result = '';
-  if (guests && guests.adults > 0) {
-    if (guests.adults === 1) {
-      result += guests.adults + ' Adult';
-    } else {
-      result += guests.adults + ' Adults';
+  if (guests && guests.length > 0) {
+    const totalRooms = guests.length;
+    if (totalRooms === 1) {
+      result += totalRooms + ' Room, ';
+    } else if (totalRooms > 1) {
+      result += totalRooms + ' Rooms, ';
     }
-  }
-  if (guests && guests.kids > 0) {
-    if (guests.kids === 1) {
-      result += ', ' + guests.kids + ' Kid';
-    } else {
-      result += ', ' + guests.kids + ' Kids';
-    }
-  }
-  if (guests && guests.infants > 0) {
-    if (guests.infants === 1) {
-      result += ', ' + guests.infants + ' Infant';
-    } else {
-      result += ', ' + guests.infants + ' Infants';
+    const totalGuests = guests.reduce((total, room) => total + room.adults, 0);
+    if (totalGuests === 1) {
+      result += totalGuests + ' Adult';
+    } else if (totalGuests > 1) {
+      result += totalGuests + ' Adults';
     }
   }
   if (result === '') {

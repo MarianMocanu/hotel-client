@@ -51,13 +51,18 @@ export type Service = {
 
 export type Booking = {
   hotel: Hotel;
-  room: Room;
-  guest: Guest;
+  rooms: BookedRoom[];
   checkin: Date;
   checkout: Date;
   price: number;
   package: Service | null;
   addons: Service[];
+  guest: Guest;
+};
+
+export type BookedRoom = {
+  room: Room;
+  guest: Partial<Guest>;
 };
 
 type State = {

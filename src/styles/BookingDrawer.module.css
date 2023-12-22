@@ -71,7 +71,7 @@
 }
 
 .summarycontainer {
-  background-color: var( --secondary-color);
+  background-color: var(--secondary-color);
   padding: 1rem;
   height: 60vh;
 }
@@ -93,5 +93,5 @@
 
 .summary p span:first-child {
   font-weight: 350;
-  color: var(--primary-color)
+  color: var(--primary-color);
 }

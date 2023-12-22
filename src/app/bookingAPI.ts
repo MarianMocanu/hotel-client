@@ -1,18 +1,25 @@
 export type BookingObject = {
   hotel_id: string;
-  room_id: string;
+  rooms: BookedRoom[];
   checkinDate: Date;
   checkoutDate: Date;
-  guestInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    user_id?: string;
-    address?: string;
-  };
   guestsAmount: number;
   totalAmount?: number;
-  services: string[]
+  services: string[];
+  guest: Guest;
+};
+
+type BookedRoom = {
+  room_id: string;
+  guest: Partial<Guest>;
+};
+
+type Guest = {
+  name: string;
+  email: string;
+  phone: string;
+  user_id?: string;
+  address?: string;
 };
 
 export const createBooking = async (booking: BookingObject) => {
