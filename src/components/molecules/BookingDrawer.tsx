@@ -1,8 +1,6 @@
 import React, { FC, useContext, useEffect, useState, MouseEvent } from 'react';
 import Drawer from '../atoms/Drawer';
 import styles from '@/styles/BookingDrawer.module.css';
-import { FaChevronLeft, FaCalendarAlt, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
-import { formatDate } from '@/app/util';
 import ButtonGroup from '../atoms/ButtonGroup';
 import { fetchAvailableRooms } from '@/app/roomsAPI';
 import { Booking, Context, Room, Service } from '../atoms/Context';
@@ -17,6 +15,7 @@ import { toast } from 'react-toastify';
 import RoomInfoDrawer from './RoomInfoDrawer';
 import { PackageCard } from '../atoms/PackageCard';
 import Summary from './Summary';
+import { DrawerHeader } from '../atoms/DrawerHeader';
 
 type Props = {
   isOpen: boolean;
@@ -214,7 +213,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       zIndex={1001}
       size="55rem"
       closeButtonVisible={false}
-      header={<DrawerHeader onBackClick={handleOnBackClick} />}
+      header={<DrawerHeader onBackClick={handleOnBackClick} isEvent={false} />}
       footer={
         <DrawerFooter
           onNextClick={handleOnNextClick}
@@ -265,7 +264,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       {tab === 'rooms' && step === 3 && (
         <div className={styles.overview}>
           <div className={styles.flex}>
-            <GuestForm />
+            <GuestForm isEvent={false} />
           </div>
           <div className={styles.summarycontainer}>
             {booking.room && (
@@ -286,39 +285,39 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
 };
 export default BookingDrawer;
 
-type DrawerHeaderProps = {
-  onBackClick: () => void;
-};
-const DrawerHeader: FC<DrawerHeaderProps> = ({ onBackClick }) => {
-  const { booking } = useContext(Context);
-  return (
-    <div className={styles.horizontal}>
-      <div className={`${styles.icon} ${styles.background}`} onClick={onBackClick}>
-        <FaChevronLeft />
-      </div>
-      <div className={styles.horizontal}>
-        <div className={styles.icon}>
-          <FaCalendarAlt />
-        </div>
-        <p>
-          {formatDate(booking.checkin)} - {formatDate(booking.checkout)}
-        </p>
-      </div>
-      <div className={styles.horizontal}>
-        <div className={styles.icon}>
-          <FaUser />
-        </div>
-        <p>{booking.guest?.guestsString}</p>
-      </div>
-      <div className={styles.horizontal}>
-        <div className={styles.icon}>
-          <FaMapMarkerAlt />
-        </div>
-        <p>{booking.hotel?.name}</p>
-      </div>
-    </div>
-  );
-};
+// type DrawerHeaderProps = {
+//   onBackClick: () => void;
+// };
+// const DrawerHeader: FC<DrawerHeaderProps> = ({ onBackClick }) => {
+//   const { booking } = useContext(Context);
+//   return (
+//     <div className={styles.horizontal}>
+//       <div className={`${styles.icon} ${styles.background}`} onClick={onBackClick}>
+//         <FaChevronLeft />
+//       </div>
+//       <div className={styles.horizontal}>
+//         <div className={styles.icon}>
+//           <FaCalendarAlt />
+//         </div>
+//         <p>
+//           {formatDate(booking.checkin)} - {formatDate(booking.checkout)}
+//         </p>
+//       </div>
+//       <div className={styles.horizontal}>
+//         <div className={styles.icon}>
+//           <FaUser />
+//         </div>
+//         <p>{booking.guest?.guestsString}</p>
+//       </div>
+//       <div className={styles.horizontal}>
+//         <div className={styles.icon}>
+//           <FaMapMarkerAlt />
+//         </div>
+//         <p>{booking.hotel?.name}</p>
+//       </div>
+//     </div>
+//   );
+// };
 
 type DrawerFooterProps = {
   onNextClick: () => void;

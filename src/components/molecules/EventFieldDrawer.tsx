@@ -71,11 +71,13 @@ const EventFieldDrawer: FC<Props> = ({ isOpen, onClose, field }) => {
     if (field === 'Start Time') {
       if (selectedTimeslot !== undefined) {
         setEventBooking({ ...eventBooking, start_time: selectedTimeslot });
+        setSelectedTimeslot(undefined);
         onClose();
       }
     } else if (field === 'End Time') {
       if (selectedTimeslot !== undefined) {
         setEventBooking({ ...eventBooking, end_time: selectedTimeslot });
+        setSelectedTimeslot(undefined);
         onClose();
       }
     } else if (field === 'Event Type') {
@@ -90,7 +92,7 @@ const EventFieldDrawer: FC<Props> = ({ isOpen, onClose, field }) => {
     <Drawer open={isOpen} onClose={onClose} title={field} size={'25rem'} zIndex={1001}>
       {(field === 'Start Time' || field === 'End Time') && (
         <div>
-          <div className={styles.horizontal}>
+          <div className={styles.grid}>
             {timeslots.map(timeslot => (
               <div
                 key={timeslot}

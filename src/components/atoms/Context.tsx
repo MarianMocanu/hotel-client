@@ -60,6 +60,16 @@ export type Booking = {
   addons: Service[];
 };
 
+export type EventVenue = {
+  _id: string;
+  hotel_id: string;
+  name: string;
+  meetingPerks: string[];
+  partyPerks: string[];
+  meetingDesc: string;
+  partyDesc: string;
+}
+
 export type EventBooking = {
   hotel_name: string;
   hotel_id: string;
@@ -74,6 +84,7 @@ export type EventBooking = {
   guest_amount: number;
   corporation: string;
   comments: string;
+  venue_data: EventVenue;
 }
 
 type State = {

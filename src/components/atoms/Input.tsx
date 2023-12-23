@@ -17,7 +17,7 @@ type Props = {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onBlur: (target: FocusEvent<HTMLInputElement>) => void;
   placeholder: string;
-  name: 'name' | 'password' | 'confirmPassword' | 'email' | 'address' | 'phone' | 'dob';
+  name: 'name' | 'password' | 'confirmPassword' | 'email' | 'address' | 'phone' | 'dob' | 'comments' | 'corporation';
   type?: HTMLInputTypeAttribute;
   animated?: boolean;
   showError?: boolean;

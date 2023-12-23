@@ -1,6 +1,14 @@
 .timeslot {
   color: #182b398a;
   cursor: pointer;
+  font-size: 1.2rem;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--secondary-darker)
+}
+
+.grid {
+  height: 80vh;
+  overflow-y: auto;
 }
 
 .timeslot:hover {
@@ -14,4 +22,7 @@
 
 .eventType {
     font-size: 1.4rem;
+    border-bottom: none;
+    padding-block: 0.7rem;
+
 }

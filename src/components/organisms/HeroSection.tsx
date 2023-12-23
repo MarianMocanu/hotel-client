@@ -143,7 +143,7 @@ function HeroSection() {
             <div className={`${styles.option} ${styles.border}`} onClick={openEventGuestsDrawer}>
               <div>
                 <p className={styles.optionLabel}>Number of Participants</p>
-                <p className={styles.optionValue}>{eventBooking?.guest_amount || '25'}</p>
+                <p className={styles.optionValue}>{eventBooking?.guest_amount || 'Add participants'}</p>
               </div>
               <FaChevronDown />
             </div>
@@ -171,7 +171,7 @@ function HeroSection() {
               <div className={styles.option} onClick={() => openEventFieldDrawer('Start Time')}>
                 <div>
                   <p className={styles.optionLabel}>Starts</p>
-                  <p className={styles.optionValue}>{eventBooking.start_time || '09:00'}</p>
+                  <p className={styles.optionValue}>{eventBooking.start_time || 'Start time'}</p>
                 </div>
                 <FaChevronDown />
               </div>
@@ -179,7 +179,7 @@ function HeroSection() {
               <div className={styles.option} onClick={() => openEventFieldDrawer('End Time')}>
                 <div>
                   <p className={styles.optionLabel}>Ends</p>
-                  <p className={styles.optionValue}>{eventBooking.end_time || '16:00'}</p>
+                  <p className={styles.optionValue}>{eventBooking.end_time || 'End time'}</p>
                 </div>
                 <FaChevronDown />
               </div>
@@ -208,7 +208,7 @@ function HeroSection() {
             <div className={`${styles.option} ${styles.border}`} onClick={openEventGuestsDrawer}>
               <div>
                 <p className={styles.optionLabel}>Number of Participants</p>
-                <p className={styles.optionValue}>{eventBooking?.guest_amount || '25'}</p>
+                <p className={styles.optionValue}>{eventBooking?.guest_amount || 'Add participants'}</p>
               </div>
               <FaChevronDown />
             </div>
