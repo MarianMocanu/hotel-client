@@ -1,3 +1,119 @@
 .img {
     border-radius: 10px;
 }
+
+.scrollable {
+    height: 80vh;
+    overflow-y: auto;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 500;
+    padding-block: 1rem;
+}
+
+.mainCard {
+    height: 50vh;
+    border-bottom: 1px solid var(--secondary-darker);
+    cursor: pointer;
+}
+
+.smallCard {
+    border-bottom: 1px solid var(--secondary-darker);
+    padding-top: 0.5rem;
+}
+
+.mainCard img {
+    width: 100%;
+    height: 70%;
+    object-fit: cover;
+}
+
+.smallCard img {
+    width: 100%;
+    object-fit: cover;
+}
+
+
+.mainCard .cardTitle {
+    padding-block: 0.8rem;
+    font-weight: 450;
+}
+
+.smallCard .cardTitle {
+    padding-block: 0.3rem;
+    font-weight: 450;
+    font-size: 1.2rem;
+}
+
+.mainCard .cardContent {
+    display:flex;
+    justify-content: space-between;
+}
+
+.smallCard .cardContent {
+    display:flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.btn {
+    font-weight: 500;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    align-self: flex-end;
+}
+
+ .btn {
+    margin-bottom: 0.5rem;
+}
+
+
+
+.perks {
+    font-weight: 300;
+}
+
+.venueCardsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.venueImgContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.venueImgContainer img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.venueContainer {
+display:grid;
+grid-template-columns: 1fr 1fr;
+gap: 0.5rem;
+padding-bottom: 5vh;
+border-bottom: 1px solid var(--secondary-darker);
+}
+
+.footerDrawer {
+    border-top: 1px solid var(--secondary-darker);
+}
+
+.venueContainer p {
+    font-weight: 300;
+    width: 90%;
+}
+
+.venueContainer li {
+    font-weight: 300;
+}
+

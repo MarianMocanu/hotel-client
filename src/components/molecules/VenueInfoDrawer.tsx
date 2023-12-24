@@ -10,38 +10,38 @@ function VenueInfoDrawer() {
 
   return (
     <div>
-        <div>
+        <div className={styles.venueImgContainer} >
         <Image
         src={`/venues/${eventBooking.venue_data.name.trim().toLowerCase().replace(/\s+/g, '').replace(/\./g, '')}.webp`}
         alt="venue"
-        width={350}
-        height={200}
+        width={385}
+        height={220}
         className={styles.img}
       />
               <Image
         src={`/venues/${eventBooking.type === 'meeting' ? 'meeting' : 'wedding'}.webp`}
         alt="venue2"
-        width={350}
-        height={200}
+        width={385}
+        height={220}
         className={styles.img}
       />
         </div>
         <div>
-            <div>
-                <h3>{eventBooking.venue_data.name}</h3>
+                <h3 className={styles.title}>{eventBooking.venue_data.name}</h3>
+            <div className={styles.venueContainer}>
                 {eventBooking.type === 'meeting' ?
                 (<p>{eventBooking.venue_data.meetingDesc}</p>) :
             (<p>{eventBooking.venue_data.partyDesc}</p>)
         }
-            </div>
             <ul>
                 {
-                    eventBooking.type === 'meeting' ?
-                    (eventBooking.venue_data.meetingPerks.map((perk)=> {return <li>{perk}</li>}))
-                    :
-                    (eventBooking.venue_data.partyPerks.map((perk)=> {return <li>{perk}</li>}))
+                  eventBooking.type === 'meeting' ?
+                  (eventBooking.venue_data.meetingPerks.map((perk)=> {return <li>{perk}</li>}))
+                  :
+                  (eventBooking.venue_data.partyPerks.map((perk)=> {return <li>{perk}</li>}))
                 }
             </ul>
+                </div>
         </div>
     </div>
   )

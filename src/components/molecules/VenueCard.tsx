@@ -16,22 +16,23 @@ const VenueCard: FC<Props> = ({ venue, onClick, isMain, isMeeting }) => {
     <div
       onClick={onClick}
       id={venue._id}
+      className={isMain ? styles.mainCard : styles.smallCard}
     >
       <Image
         src={`/venues/${venue.name.trim().toLowerCase().replace(/\s+/g, '').replace(/\./g, '')}.webp`}
         alt="venue"
-        height={200}
-        width={330}
+        height={210}
+        width={346}
         className={styles.img}
       />
-        <h2>{venue.name}</h2>
-      <div>
-        <ul>
+        <h2 className={styles.cardTitle} >{venue.name}</h2>
+      <div className={styles.cardContent}>
+        <ul className={styles.perks} >
             {isMeeting ? (
-                venue.meetingPerks.map((perk, index) => { if(index < 4) return <li>{perk}</li>} )
-            ) : (venue.partyPerks.map((perk, index) => { if(index < 4) return <li>{perk}</li>} ))}
+                venue.meetingPerks.map((perk, index) => { if(index < 3) return <li>{perk}</li>} )
+            ) : (venue.partyPerks.map((perk, index) => { if(index < 3) return <li>{perk}</li>} ))}
         </ul>
-        <div>
+        <div className={styles.btn}>
             <p>Read More</p>
         </div>
       </div>

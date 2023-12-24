@@ -1,27 +1,17 @@
 import React, { FC, useContext, useEffect, useState, MouseEvent } from 'react';
 import Drawer from '../atoms/Drawer';
 import styles from '@/styles/BookingDrawer.module.css';
-import { FaChevronLeft, FaCalendarAlt, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
-import { formatDate } from '@/app/util';
-import ButtonGroup from '../atoms/ButtonGroup';
-import { fetchAvailableRooms } from '@/app/roomsAPI';
-import { Booking, Context, Room, Service } from '../atoms/Context';
-import RoomCard from './RoomCard';
-import { differenceInDays } from 'date-fns';
+import styles2 from '@/styles/VenueDrawer.module.css';
+import { Context, EventBooking } from '../atoms/Context';
 import Button from '../atoms/Button';
-import Filler from '../atoms/Filler';
 import GuestForm from './GuestForm';
-import Image from 'next/image';
-import { BookingObject, createBooking } from '@/app/bookingAPI';
-import { toast } from 'react-toastify';
-import RoomInfoDrawer from './RoomInfoDrawer';
-import { PackageCard } from '../atoms/PackageCard';
-import Summary from './Summary';
 import { EventVenue } from '../atoms/Context';
 import { DrawerHeader } from '../atoms/DrawerHeader';
 import { fetchVenues } from '@/app/venuesAPI';
 import VenueInfoDrawer from './VenueInfoDrawer';
 import VenueCard from './VenueCard';
+import { EventBookingObject, createEventBooking } from '@/app/eventBookingAPI';
+import { toast } from 'react-toastify';
 
 type Props = {
   isOpen: boolean;
@@ -61,42 +51,38 @@ const EventBookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   async function handleOnNextClick(): Promise<void> {
     if (step === 2) {
       if (isBookingReadyToBeCreated()) {
-        //   const newBooking: BookingObject = {
-        //     checkinDate: booking.checkin,
-        //     checkoutDate: booking.checkout,
-        //     guestInfo: {
-        //       email: booking.guest.email,
-        //       name: booking.guest.name,
-        //       phone: booking.guest.phone,
-        //     },
-        //     hotel_id: booking.hotel._id,
-        //     room_id: booking.room._id,
-        //     guestsAmount: booking.guest.numberOfGuests,
-        //     services: [
-        //       ...booking.addons.map(service => service._id),
-        //       ...(booking.package !== null ? [booking.package._id] : []),
-        //     ],
-        //   };
-        //   try {
-        //     const response = await createBooking(newBooking);
-        //     if (response && response.ok) {
-        //       const createdBooking = await response.json();
-        //       if (createdBooking && createdBooking._id) {
-        //         toast.success('Your booking was created successfully!');
-        //       }
-        //     } else {
-        //       throw new Error('Booking could not be created');
-        //     }
-        //   } catch (error) {
-        //     console.error('Error creating booking', error);
-        //     setError({ message: 'Error creating booking', shouldRefresh: false });
-        //   } finally {
-        //     setStep(1);
-        //     setTab('rooms');
-        //     setRooms([] as Room[]);
-        //     setBooking({} as Booking);
-        //     onClose();
-        //   }
+        const newEventBooking: EventBookingObject = {
+          venue_id: eventBooking.venue_data._id,
+          date: eventBooking.date,
+          type: eventBooking.type,
+          host_name: eventBooking.host_name,
+          email: eventBooking.email,
+          phone: eventBooking.phone,
+          guest_amount: eventBooking.guest_amount,
+          start_time: eventBooking.start_time,
+          end_time: eventBooking.end_time,
+          corporation:eventBooking.corporation,
+          comments: eventBooking.comments
+        }
+          try {
+            const response = await createEventBooking(newEventBooking);
+            if (response && response.ok) {
+              const createdEventBooking = await response.json();
+              if (createdEventBooking && createdEventBooking._id) {
+                toast.success('Thanks for your inquiry. One of our representants will message you as soon as possible.');
+              }
+            } else {
+              throw new Error('Sorry, something went wrong. Please try again.');
+            }
+          } catch (error) {
+            console.error('Error creating event booking', error);
+            setError({ message: 'Error creating event booking', shouldRefresh: false });
+          } finally {
+            setStep(0);
+            setVenues(undefined);
+            setEventBooking({} as EventBooking);
+            onClose();
+          }
       }
     } else {
       setStep(2);
@@ -165,7 +151,7 @@ const EventBookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     <Drawer
       onClose={handleOnDrawerClose}
       open={isOpen}
-      title={step === 0 ? 'Your Selection' : step === 2 ? 'Your Inquiry' : ''}
+      title={step === 2 ? 'Your Inquiry' : ''}
       zIndex={1001}
       size="55rem"
       closeButtonVisible={false}
@@ -179,15 +165,17 @@ const EventBookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       }
     >
       {step === 0 && venues !== undefined && (
-        <div className={styles.content}>
+        <div className={`${styles.content} ${styles2.scrollable}`}>
+          <h3 className={styles2.title}>Your Selection</h3>
           <VenueCard
+            key={venues.selected_venue._id}
             venue={venues?.selected_venue}
             onClick={handleOnVenueClick}
             isMain={true}
             isMeeting={eventBooking.type === ' meeting' ? true : false}
           />
-          <h3>Recommended alternatives</h3>
-          <div>
+          <h3 className={styles2.title}>Recommended alternatives</h3>
+          <div className={styles2.venueCardsGrid}>
             {venues !== undefined &&
               venues.other_venues.map(venue => {
                 return (
@@ -205,9 +193,7 @@ const EventBookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       )}
       {step === 1 && <VenueInfoDrawer />}
 
-      {step === 2 && (
-        <GuestForm isEvent={true} />
-      )}
+      {step === 2 && <GuestForm isEvent={true} />}
     </Drawer>
   );
 };
@@ -215,18 +201,22 @@ export default EventBookingDrawer;
 
 type DrawerFooterProps = {
   onNextClick: () => void;
-  step: 0 | 1 | 2 | 3;
+  step: 0 | 1 | 2;
   nextDisabled?: boolean;
 };
 
 const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled }) => {
   return (
-    <div className={styles.footer}>
-      <Button
-        onClick={onNextClick}
-        text={step === 0 || step === 1 ? 'Continue' : 'Send your inquiry'}
-        disabled={nextDisabled}
-      />
-    </div>
+    <>
+      {(step === 1 || step === 2) && (
+        <div className={`${styles.footer} ${styles2.footerDrawer} `}>
+          <Button
+            onClick={onNextClick}
+            text={step === 1 ? 'Continue' : 'Send your inquiry'}
+            disabled={nextDisabled}
+          />
+        </div>
+      )}
+    </>
   );
 };

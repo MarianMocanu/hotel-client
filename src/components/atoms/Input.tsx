@@ -10,6 +10,8 @@ const UX_ERRORS = {
   password: 'Minimum required length is 5 characters',
   confirmPassword: 'Passwords do not match',
   dob: 'Required date selection',
+  corporation: 'Error message for corporation', 
+  comments: 'Error message for comments'
 };
 
 type Props = {
