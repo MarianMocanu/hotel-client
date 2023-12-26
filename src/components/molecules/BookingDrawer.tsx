@@ -23,7 +23,7 @@ type Props = {
 };
 
 const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
-  const { setError, booking, setBooking } = useContext(Context);
+  const { setError, booking, setBooking, user } = useContext(Context);
 
   const tabs = ['Rooms', 'Packages'];
 
@@ -72,12 +72,13 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
             email: booking.guest.email,
             name: booking.guest.name,
             phone: booking.guest.phone,
+            user_id: user ? user._id : ''
           },
           hotel_id: booking.hotel._id,
           room_id: booking.room._id,
           guestsAmount: booking.guest.numberOfGuests,
           services: [
-            ...booking.addons.map(service => service._id),
+            ...(booking.addons?.map(service => service._id) || []),
             ...(booking.package !== null ? [booking.package._id] : []),
           ],
         };
@@ -95,7 +96,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           console.error('Error creating booking', error);
           setError({ message: 'Error creating booking', shouldRefresh: false });
         } finally {
-          setStep(1);
+          setStep(0);
           setTab('rooms');
           setRooms([] as Room[]);
           setBooking({} as Booking);

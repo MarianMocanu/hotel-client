@@ -34,7 +34,7 @@ function Summary() {
             <span>{(booking.package?.price * nights).toLocaleString('de-DE')} kr.</span>
           )}
         </p>
-        {booking.addons.length > 0 &&
+        {booking.addons?.length > 0 &&
           booking.addons.map((addon, index) => (
             <p key={index}>
               {' '}

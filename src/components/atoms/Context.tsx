@@ -1,12 +1,15 @@
 import React, { createContext, useState, PropsWithChildren, Dispatch, SetStateAction } from 'react';
 
 export type User = {
+  _id?: string;
   name: string;
   email: string;
   phone?: string;
   address?: string;
   dob?: string;
+  bookings?: Booking[]; 
 };
+
 
 export type Hotel = {
   _id: string;
@@ -50,6 +53,7 @@ export type Service = {
 };
 
 export type Booking = {
+  _id?:string
   hotel: Hotel;
   room: Room;
   guest: Guest;
@@ -58,6 +62,9 @@ export type Booking = {
   price: number;
   package: Service | null;
   addons: Service[];
+  checkinDate?: string;
+  checkoutDate?: string;
+  guestsAmount?: number;
 };
 
 export type EventVenue = {
@@ -87,6 +94,8 @@ export type EventBooking = {
   venue_data: EventVenue;
 }
 
+export type Page = 'landingPage' | 'userPage';
+
 type State = {
   user: User;
   setUser: Dispatch<SetStateAction<User>>;
@@ -96,6 +105,8 @@ type State = {
   setBooking: Dispatch<SetStateAction<Booking>>;
   eventBooking: EventBooking;
   setEventBooking: Dispatch<SetStateAction<EventBooking>>;
+  page: Page;
+  setPage: Dispatch<SetStateAction<Page>>;
 };
 
 type Error = {
@@ -110,6 +121,7 @@ export const ContextProvider = ({ children }: PropsWithChildren) => {
   const [error, setError] = useState<Error | null>(null);
   const [booking, setBooking] = useState({} as Booking);
   const [eventBooking, setEventBooking] = useState({} as EventBooking);
+  const [page, setPage] = useState('landingPage' as Page);
 
   const contextValue = {
     user,
@@ -119,7 +131,9 @@ export const ContextProvider = ({ children }: PropsWithChildren) => {
     booking,
     setBooking,
     eventBooking,
-    setEventBooking
+    setEventBooking,
+    page,
+    setPage
   };
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;
