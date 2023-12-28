@@ -23,6 +23,7 @@ const Summary: FC = () => {
         <span>{`${booking.rooms[0].room.name} for ${nights} ${
           nights === 1 ? 'night' : 'nights'
         }`}</span>
+        {/* price has to be refactored. needs to be calculated according to services */}
         <span>{booking.price.toLocaleString('de-DE')} kr.</span>
       </p>
       <p>
