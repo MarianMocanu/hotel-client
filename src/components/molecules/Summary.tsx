@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React, { FC, useContext } from 'react';
 import { Context } from '../atoms/Context';
 import { differenceInDays } from 'date-fns';
 import styles from '@/styles/BookingDrawer.module.css';
 
-function Summary() {
+const Summary: FC = () => {
   const { setError, booking, setBooking } = useContext(Context);
   const nights = differenceInDays(booking.checkout, booking.checkin);
 
@@ -20,7 +20,9 @@ function Summary() {
     <div className={styles.summary}>
       <h3>Summary</h3>
       <p>
-        <span>{`${booking.room.name} for ${nights} ${nights === 1 ? 'night' : 'nights'}`}</span>
+        <span>{`${booking.rooms[0].room.name} for ${nights} ${
+          nights === 1 ? 'night' : 'nights'
+        }`}</span>
         <span>{booking.price.toLocaleString('de-DE')} kr.</span>
       </p>
       <p>
@@ -31,9 +33,10 @@ function Summary() {
           <span>{(booking.package?.price * nights).toLocaleString('de-DE')} kr.</span>
         )}
       </p>
-      {booking.addons.length > 0 &&
+      {booking.addons &&
+        booking.addons.length > 0 &&
         booking.addons.map((addon, index) => (
-          <p key={index}>
+          <p key={index.toString()}>
             {' '}
             <span>{addon.title}</span> <span>{addon.price.toLocaleString('de-DE')} kr.</span>{' '}
           </p>
@@ -43,6 +46,6 @@ function Summary() {
       </h3>
     </div>
   );
-}
+};
 
 export default Summary;

@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState, MouseEvent } from 'react';
+import React, { FC, useContext, useEffect, useState, MouseEvent, useLayoutEffect } from 'react';
 import Drawer from '../atoms/Drawer';
 import styles from '@/styles/BookingDrawer.module.css';
 import { FaChevronLeft, FaCalendarAlt, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
@@ -24,26 +24,42 @@ type Props = {
 
 const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   const { setError, booking, setBooking } = useContext(Context);
-
   // steps index: 0: choose room, 1: choose package, 2: addons ,  3:guest info
-  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [rooms, setRooms] = useState<Room[]>([] as Room[]);
+  const [filteredRooms, setFilteredRooms] = useState<Room[]>([] as Room[]);
   const [services, setServices] = useState<Service[]>([] as Service[]);
   const [selectedAddons, setSelectedAddons] = useState<Service[]>([] as Service[]);
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
+  const [roomIndex, setRoomIndex] = useState(0);
 
   function handleOnBackClick(): void {
     if (step === 0) {
-      handleOnDrawerClose();
+      if (roomIndex > 0) {
+        const newBooking = { ...booking };
+        newBooking.rooms[roomIndex - 1].room = {} as Room;
+        setBooking(newBooking);
+        setRoomIndex(roomIndex - 1);
+      } else {
+        handleOnDrawerClose();
+      }
     } else if (step === 1) {
       setStep(0);
-      setBooking({ ...booking, rooms: [] as BookedRoom[], package: null });
+      const newRooms = [...booking.rooms];
+      newRooms.forEach(room => (room.room = {} as Room));
+      setBooking({ ...booking, rooms: newRooms });
     } else if (step === 2) {
       setStep(1);
       setSelectedAddons([] as Service[]);
       setBooking({ ...booking, addons: [] as Service[] });
     } else if (step === 3) {
       setStep(2);
+      setRoomIndex(booking.rooms.length - 1);
     }
+  }
+
+  function hasSelectedAllRooms() {
+    const notSelectedRoomIndex = booking.rooms.findIndex(room => !room.room._id);
+    return notSelectedRoomIndex === -1;
   }
 
   function isBookingReadyToBeCreated(): boolean {
@@ -51,9 +67,9 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       !!booking.checkin &&
       !!booking.checkout &&
       !!booking.rooms &&
-      !!booking.rooms[0].guest &&
+      booking.rooms.length > 0 &&
       !!booking.hotel._id &&
-      booking.rooms.length > 0
+      hasSelectedAllRooms()
     );
   }
 
@@ -89,13 +105,24 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           onClose();
         }
       }
-    } else if (step < 3) {
+    } else if (step === 2) {
+      if (hasSelectedAllRooms()) {
+        setStep(3);
+      } else {
+        setStep(0);
+        setRoomIndex(prevState => (prevState < booking.rooms.length ? prevState + 1 : prevState));
+      }
+    } else {
       setStep(prevStep => (prevStep + 1) as 0 | 1 | 2 | 3);
     }
   }
 
   function handleOnDrawerClose(): void {
     setRooms([]);
+    const newBooking = { ...booking };
+    newBooking.rooms.forEach(room => (room.room = {} as Room));
+    newBooking.price = 0;
+    setBooking(newBooking);
     onClose();
   }
 
@@ -104,8 +131,12 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     const room = rooms.find(room => room._id === roomId);
     if (room) {
       const newBooking = { ...booking };
-      // newBooking.rooms.push(room);
-      newBooking.price = room.price * differenceInDays(newBooking.checkout, newBooking.checkin);
+      newBooking.rooms[roomIndex].room = room;
+      if (!newBooking.price) {
+        newBooking.price = room.price * differenceInDays(newBooking.checkout, newBooking.checkin);
+      } else {
+        newBooking.price += room.price * differenceInDays(newBooking.checkout, newBooking.checkin);
+      }
       newBooking.package = null;
       setBooking(newBooking);
       setStep(1);
@@ -137,6 +168,21 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       (service, index, self) => index === self.findIndex(s => s._id === service._id),
     );
   }
+
+  function filterRooms(): Room[] {
+    if (booking.rooms) {
+      const bookedRoomsIds = booking.rooms.map(room => room.room._id);
+      const filtered = rooms.filter(room => !bookedRoomsIds.includes(room._id));
+      return filtered;
+    }
+    return [];
+  }
+
+  useLayoutEffect(() => {
+    if (booking.rooms && roomIndex === booking.rooms.length) {
+      setStep(1);
+    }
+  }, [roomIndex]);
 
   useEffect(() => {
     async function getRooms() {
@@ -171,10 +217,13 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       booking.checkout &&
       booking.rooms.length > 0
     ) {
-      // console.log(JSON.stringify(booking, null, 2));
       getRooms();
     }
   }, [isOpen]);
+
+  useLayoutEffect(() => {
+    setFilteredRooms(filterRooms());
+  }, [rooms, roomIndex]);
 
   return (
     <Drawer
@@ -182,9 +231,9 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       open={isOpen}
       title={
         step === 0
-          ? 'Choose room'
+          ? `Choose room ${roomIndex + 1}`
           : step === 2
-          ? 'Additional services'
+          ? `Additional services for room ${roomIndex + 1}`
           : step === 3
           ? 'Guest information'
           : ''
@@ -198,24 +247,26 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           onNextClick={handleOnNextClick}
           step={step}
           nextDisabled={step === 3 && !isBookingReadyToBeCreated()}
+          roomIndex={roomIndex}
         />
       }
     >
       {step === 0 && (
         <div className={styles.content}>
           {step === 0 &&
-            rooms.length > 0 &&
-            rooms.map((room, index) => (
+            filteredRooms.length > 0 &&
+            filteredRooms.map((room, index) => (
               <RoomCard
                 data={room}
                 onClick={handleOnRoomClick}
-                key={index}
+                key={index.toString()}
                 nights={differenceInDays(booking.checkout, booking.checkin)}
               />
             ))}
         </div>
       )}
-      {step === 1 && <RoomInfoDrawer services={services} />}
+      {/* package page */}
+      {step === 1 && <RoomInfoDrawer services={services} roomIndex={roomIndex} />}
       {/* addons page */}
       {step === 2 && (
         <div className={styles.grid}>
@@ -282,7 +333,7 @@ const DrawerHeader: FC<DrawerHeaderProps> = ({ onBackClick }) => {
         <div className={styles.icon}>
           <FaUser />
         </div>
-        <p>{booking.rooms && booking.rooms[0].guest ? booking.rooms[0].guest.guestsString : ''}</p>
+        <p>{booking.guest && booking.guest.guestsString}</p>
       </div>
       <div className={styles.horizontal}>
         <div className={styles.icon}>
@@ -298,36 +349,61 @@ type DrawerFooterProps = {
   onNextClick: () => void;
   step: 0 | 1 | 2 | 3;
   nextDisabled?: boolean;
+  roomIndex: number;
 };
-const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled }) => {
+
+// used for diplaying price per room per period and navigating to next step
+const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled, roomIndex }) => {
   const { booking } = useContext(Context);
-  const subtotal =
-    booking.price +
-    (booking.package ? booking.package.price : 0) *
-      differenceInDays(booking.checkout, booking.checkin) +
-    (booking.addons ? booking.addons.reduce((acc, addon) => acc + addon.price, 0) : 0);
+  const nights = differenceInDays(booking.checkout, booking.checkin);
+
+  function getTotalPriceForBooking(): number {
+    const total = booking.rooms.reduce((acc, room) => acc + room.room.price, 0);
+    return total * nights;
+  }
+
+  function getTotalPricePerRoom(): number {
+    const roomPricePerNight = booking.rooms[roomIndex].room.price;
+    return roomPricePerNight * nights + (booking.package ? booking.package.price : 0) * nights;
+  }
+
+  function getFooterString(): string {
+    let roomsString = step === 3 ? 'Total costs for ' : 'Costs for ';
+    const nights = differenceInDays(booking.checkout, booking.checkin);
+    roomsString += nights;
+    if (nights === 1) {
+      roomsString += ' night';
+    } else if (nights > 1) {
+      roomsString += ' nights';
+    }
+    return roomsString;
+  }
+
+  function getButtonText() {
+    if (step === 3) return 'Book your stay';
+    return 'Select';
+  }
 
   if (
     booking.rooms &&
     booking.rooms.length > 0 &&
     booking.checkin &&
     booking.checkout &&
-    booking.price
+    booking.price &&
+    step > 0
   ) {
     return (
       <div className={styles.footer}>
-        <div className={styles.footerText}>
-          {booking.rooms[0].room.name} for {differenceInDays(booking.checkout, booking.checkin)}
-          {' nights'}
-        </div>
+        <div className={styles.footerText}>{getFooterString()}</div>
         <Filler />
-        <div className={styles.footerText}>{subtotal.toLocaleString('de-DE')} kr.</div>
+        <div className={styles.footerText}>
+          {step === 3
+            ? getTotalPriceForBooking().toLocaleString('de-DE')
+            : getTotalPricePerRoom().toLocaleString('de-DE')}
+          {' kr.'}
+        </div>
         <div className={styles.buttonContainer}>
-          <Button
-            onClick={onNextClick}
-            text={step === 1 ? 'Select' : step === 2 ? 'Finish Your Booking' : 'Book your stay'}
-            disabled={nextDisabled}
-          />
+          <Button onClick={onNextClick} text={getButtonText()} disabled={nextDisabled} />
         </div>
       </div>
     );

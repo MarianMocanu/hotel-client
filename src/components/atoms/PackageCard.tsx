@@ -15,7 +15,7 @@ export const PackageCard: FC<PackageCardProps> = ({ service, selected, onClick }
   const { booking } = useContext(Context);
   return (
     <div
-      className={`${styles.container} ${selected ? styles.selected : ''}`}
+      className={`${styles.card} ${selected ? styles.selected : ''}`}
       onClick={onClick}
       id={service._id}
     >
