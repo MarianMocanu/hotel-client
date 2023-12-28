@@ -232,6 +232,8 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       title={
         step === 0
           ? `Choose room ${roomIndex + 1}`
+          : step === 1
+          ? `Choose room ${roomIndex + 1} package`
           : step === 2
           ? `Additional services for room ${roomIndex + 1}`
           : step === 3
