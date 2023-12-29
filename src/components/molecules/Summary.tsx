@@ -20,8 +20,8 @@ const Summary: FC = () => {
   return (
     <div className={styles.summaryContainer}>
       <h3 className={styles.heading}>Summary</h3>
-      {booking.rooms.map(room => (
-        <div className={styles.roomContainer}>
+      {booking.rooms.map((room, index) => (
+        <div className={styles.roomContainer} key={index.toString()}>
           <div className={styles.row}>
             <div className={styles.description}>
               {`${room.room.name} for ${nights} ${nights === 1 ? 'night' : 'nights'}`}

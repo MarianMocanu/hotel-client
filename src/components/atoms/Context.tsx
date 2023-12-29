@@ -55,14 +55,14 @@ export type Booking = {
   checkin: Date;
   checkout: Date;
   price: number;
-  package: Service | null;
-  addons: Service[];
   guest: Guest;
 };
 
 export type BookedRoom = {
   room: Room;
   guest: Partial<Guest>;
+  package: Service | null;
+  addons: Service[];
 };
 
 type State = {

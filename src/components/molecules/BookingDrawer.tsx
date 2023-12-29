@@ -6,14 +6,14 @@ import { formatDate } from '@/app/util';
 import { fetchAvailableRooms } from '@/app/roomsAPI';
 import { Booking, Context, Room, Service } from '../atoms/Context';
 import RoomCard from './RoomCard';
-import { differenceInDays } from 'date-fns';
+import { add, differenceInDays } from 'date-fns';
 import Button from '../atoms/Button';
 import Filler from '../atoms/Filler';
 import GuestForm from './GuestForm';
 import { BookingObject, createBooking } from '@/app/bookingAPI';
 import { toast } from 'react-toastify';
 import RoomInfoDrawer from './RoomInfoDrawer';
-import { PackageCard } from '../atoms/PackageCard';
+import { ServiceCard } from './ServiceCard';
 import Summary from './Summary';
 
 type Props = {
@@ -26,8 +26,9 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   // steps index: 0: choose room, 1: choose package, 2: addons ,  3:guest info
   const [rooms, setRooms] = useState<Room[]>([] as Room[]);
   const [filteredRooms, setFilteredRooms] = useState<Room[]>([] as Room[]);
+
   const [services, setServices] = useState<Service[]>([] as Service[]);
-  const [selectedAddons, setSelectedAddons] = useState<Service[]>([] as Service[]);
+
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [roomIndex, setRoomIndex] = useState(0);
 
@@ -48,8 +49,9 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       setBooking({ ...booking, rooms: newRooms });
     } else if (step === 2) {
       setStep(1);
-      setSelectedAddons([] as Service[]);
-      setBooking({ ...booking, addons: [] as Service[] });
+      // setSelectedAddons([] as Service[]);
+      // setBooking({ ...booking, addons: [] as Service[] });
+      // TODO: remove services from room
     } else if (step === 3) {
       setStep(2);
       setRoomIndex(booking.rooms.length - 1);
@@ -79,10 +81,6 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         newBooking.checkinDate = booking.checkin;
         newBooking.checkoutDate = booking.checkout;
         newBooking.hotel_id = booking.hotel._id;
-        newBooking.services = [
-          ...booking.addons.map(service => service._id),
-          ...(booking.package !== null ? [booking.package._id] : []),
-        ];
         // add rooms and guest
         try {
           const response = await createBooking(newBooking);
@@ -136,25 +134,28 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       } else {
         newBooking.price += room.price * differenceInDays(newBooking.checkout, newBooking.checkin);
       }
-      newBooking.package = null;
       setBooking(newBooking);
       setStep(1);
     }
   }
 
-  function handleAddonChange(service: Service): void {
-    if (selectedAddons.some(addon => addon._id === service._id)) {
-      setSelectedAddons(prevAddons => {
-        const newAddons = prevAddons.filter(addon => addon._id !== service._id);
-        setBooking({ ...booking, addons: newAddons });
-        return newAddons;
-      });
-    } else {
-      setSelectedAddons(prevAddons => {
-        const newAddons = [...prevAddons, service];
-        setBooking({ ...booking, addons: newAddons });
-        return newAddons;
-      });
+  function handleOnAddonClick(event: MouseEvent): void {
+    const serviceId = event.currentTarget.id;
+    const service = services.find(service => service._id === serviceId);
+    if (service) {
+      const newBooking = { ...booking };
+      if (!newBooking.rooms[roomIndex].addons) {
+        newBooking.rooms[roomIndex].addons = [];
+      }
+      const foundServiceIndex = newBooking.rooms[roomIndex].addons.findIndex(
+        addon => addon._id === service._id,
+      );
+      if (foundServiceIndex === -1) {
+        newBooking.rooms[roomIndex].addons.push(service);
+      } else {
+        newBooking.rooms[roomIndex].addons.splice(foundServiceIndex, 1);
+      }
+      setBooking(newBooking);
     }
   }
 
@@ -279,13 +280,17 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
             services.map((service, index) => {
               if (service.type === 'addon') {
                 return (
-                  <PackageCard
-                    key={index}
+                  <ServiceCard
+                    key={index.toString()}
                     service={service}
+                    onClick={handleOnAddonClick}
                     selected={
-                      selectedAddons && selectedAddons.some(addon => addon._id === service._id)
+                      booking.rooms[roomIndex].addons
+                        ? booking.rooms[roomIndex].addons.findIndex(s => s._id === service._id) !==
+                          -1
+                        : false
                     }
-                    onClick={() => handleAddonChange(service)}
+                    roomIndex={roomIndex}
                   />
                 );
               }
@@ -360,7 +365,13 @@ const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled, 
 
   function getTotalPricePerRoom(): number {
     const roomPricePerNight = booking.rooms[roomIndex].room.price;
-    return roomPricePerNight * nights + (booking.package ? booking.package.price : 0) * nights;
+    const totalRoomPrice = roomPricePerNight * nights;
+    const packagePrice = booking.rooms[roomIndex].package?.price ?? 0;
+    const totalPackagePrice = packagePrice * nights;
+    const addonsPrice = booking.rooms[roomIndex].addons
+      ? booking.rooms[roomIndex].addons.reduce((acc, addon) => acc + addon.price, 0)
+      : 0;
+    return totalRoomPrice + totalPackagePrice + addonsPrice;
   }
 
   function getFooterString(): string {

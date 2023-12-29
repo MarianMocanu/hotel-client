@@ -1,9 +1,9 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useState, MouseEvent, useEffect, useLayoutEffect } from 'react';
 import { Context, Service } from '../atoms/Context';
 import Image from 'next/image';
 import styles from '@/styles/RoomInfoDrawer.module.css';
 import { BsGem, BsBookmarkStar } from 'react-icons/bs';
-import { PackageCard } from '../atoms/PackageCard';
+import { ServiceCard } from './ServiceCard';
 
 type Props = {
   services: Service[];
@@ -11,24 +11,25 @@ type Props = {
 };
 
 const RoomInfoDrawer: FC<Props> = ({ services, roomIndex }) => {
-  const defaultPackage: Service = {
-    _id: 'default',
-    title: 'Accommodation with breakfast buffet',
-    price: 0,
-    type: 'package',
-  };
-
   const { booking, setBooking } = useContext(Context);
-  const [selectedPackage, setSelectedPackage] = useState<Service>(defaultPackage);
+  const [selectedPackage, setSelectedPackage] = useState<Service | null>(null);
 
-  function handlePackageChange(service: Service): void {
-    setSelectedPackage(service as Service);
-    if (service._id !== 'default') {
-      setBooking({ ...booking, package: service });
-    } else {
-      setBooking({ ...booking, package: null });
+  function handleOnServiceClick(event: MouseEvent): void {
+    const id = event.currentTarget.id;
+    const service = services.find(service => service._id === id);
+    if (service) {
+      const newBooking = { ...booking };
+      newBooking.rooms[roomIndex].package = service;
+      setSelectedPackage(service as Service);
+      setBooking(newBooking);
     }
   }
+
+  useLayoutEffect(() => {
+    if (booking.rooms[roomIndex].package) {
+      setSelectedPackage(booking.rooms[roomIndex].package);
+    }
+  }, []);
 
   if (booking.rooms[roomIndex] && booking.rooms[roomIndex].room._id) {
     return (
@@ -57,23 +58,16 @@ const RoomInfoDrawer: FC<Props> = ({ services, roomIndex }) => {
 
         <h4 className={styles.subtitle}>Packages</h4>
         <div className={styles.grid}>
-          {services.length > 0 && !services.some(service => service.price === 0) && (
-            <PackageCard
-              key={22}
-              service={defaultPackage}
-              selected={selectedPackage && selectedPackage._id === defaultPackage._id}
-              onClick={() => handlePackageChange(defaultPackage)}
-            />
-          )}
           {services.length > 0 &&
             services.map((service, index) => {
               if (service.type === 'package') {
                 return (
-                  <PackageCard
-                    key={index}
+                  <ServiceCard
+                    key={index.toString()}
                     service={service}
-                    selected={selectedPackage && selectedPackage._id === service._id}
-                    onClick={() => handlePackageChange(service)}
+                    selected={selectedPackage ? selectedPackage._id === service._id : false}
+                    onClick={handleOnServiceClick}
+                    roomIndex={roomIndex}
                   />
                 );
               }
