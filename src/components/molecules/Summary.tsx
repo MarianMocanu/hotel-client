@@ -2,6 +2,7 @@ import React, { FC, useContext } from 'react';
 import { Context } from '../atoms/Context';
 import { differenceInDays } from 'date-fns';
 import styles from '@/styles/BookingDrawer.module.css';
+import Filler from '../atoms/Filler';
 
 const Summary: FC = () => {
   const { setError, booking, setBooking } = useContext(Context);
@@ -17,33 +18,41 @@ const Summary: FC = () => {
   }
 
   return (
-    <div className={styles.summary}>
-      <h3>Summary</h3>
-      <p>
-        <span>{`${booking.rooms[0].room.name} for ${nights} ${
-          nights === 1 ? 'night' : 'nights'
-        }`}</span>
-        {/* price has to be refactored. needs to be calculated according to services */}
-        <span>{booking.price.toLocaleString('de-DE')} kr.</span>
-      </p>
-      <p>
-        <span>
-          {booking.package ? booking.package.title : 'Accommodation with breakfast buffet'}
-        </span>
-        {booking.package && (
-          <span>{(booking.package?.price * nights).toLocaleString('de-DE')} kr.</span>
-        )}
-      </p>
+    <div className={styles.summaryContainer}>
+      <h3 className={styles.heading}>Summary</h3>
+      {booking.rooms.map(room => (
+        <div className={styles.roomContainer}>
+          <div className={styles.row}>
+            <div className={styles.description}>
+              {`${room.room.name} for ${nights} ${nights === 1 ? 'night' : 'nights'}`}
+              {/* price has to be refactored. needs to be calculated according to services */}
+            </div>
+            <div className={styles.price}>
+              {(room.room.price * nights).toLocaleString('de-DE') + ' kr.'}
+            </div>
+          </div>
+          <div className={styles.row}>
+            <div className={styles.description}>
+              {booking.package ? booking.package.title : 'Accommodation with breakfast buffet'}
+            </div>
+            <div className={styles.price}>
+              {booking.package &&
+                (booking.package?.price * nights).toLocaleString('de-DE') + ' kr.'}
+            </div>
+          </div>
+        </div>
+      ))}
       {booking.addons &&
         booking.addons.length > 0 &&
         booking.addons.map((addon, index) => (
-          <p key={index.toString()}>
-            {' '}
-            <span>{addon.title}</span> <span>{addon.price.toLocaleString('de-DE')} kr.</span>{' '}
-          </p>
+          <div key={index.toString()}>
+            {addon.title}
+            {addon.price.toLocaleString('de-DE') + ' kr.'}
+          </div>
         ))}
-      <h3>
-        Total <span>{calculateSubtotal().toLocaleString('de-DE')} kr.</span>
+      <Filler />
+      <h3 className={styles.heading}>
+        Total <span>{calculateSubtotal().toLocaleString('de-DE') + ' kr.'}</span>
       </h3>
     </div>
   );

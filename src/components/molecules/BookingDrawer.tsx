@@ -10,7 +10,6 @@ import { differenceInDays } from 'date-fns';
 import Button from '../atoms/Button';
 import Filler from '../atoms/Filler';
 import GuestForm from './GuestForm';
-import Image from 'next/image';
 import { BookingObject, createBooking } from '@/app/bookingAPI';
 import { toast } from 'react-toastify';
 import RoomInfoDrawer from './RoomInfoDrawer';
@@ -295,19 +294,10 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       )}
       {step === 3 && (
         <div className={styles.overview}>
-          <div className={styles.flex}>
+          <div className={styles.guestInfo}>
             <GuestForm />
           </div>
-          <div className={styles.summarycontainer}>
-            {booking.rooms[0] && (
-              <Image
-                src={`/rooms/${booking.rooms[0].room.type}.webp`}
-                alt="hotel"
-                width={350}
-                height={200}
-                className={styles.flex}
-              />
-            )}
+          <div className={styles.summaryContainer}>
             <Summary />
           </div>
         </div>
