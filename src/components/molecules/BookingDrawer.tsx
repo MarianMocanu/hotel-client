@@ -4,7 +4,7 @@ import styles from '@/styles/BookingDrawer.module.css';
 import { FaChevronLeft, FaCalendarAlt, FaUser, FaMapMarkerAlt } from 'react-icons/fa';
 import { formatDate } from '@/app/util';
 import { fetchAvailableRooms } from '@/app/roomsAPI';
-import { BookedRoom, Booking, Context, Room, Service } from '../atoms/Context';
+import { Booking, Context, Room, Service } from '../atoms/Context';
 import RoomCard from './RoomCard';
 import { differenceInDays } from 'date-fns';
 import Button from '../atoms/Button';
@@ -170,9 +170,13 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   }
 
   function filterRooms(): Room[] {
-    if (booking.rooms) {
+    if (booking.rooms && booking.rooms.length > 0) {
       const bookedRoomsIds = booking.rooms.map(room => room.room._id);
-      const filtered = rooms.filter(room => !bookedRoomsIds.includes(room._id));
+      const filtered = rooms.filter(
+        room =>
+          !bookedRoomsIds.includes(room._id) &&
+          room.maxGuests >= booking.rooms[roomIndex].guest.numberOfGuests!,
+      );
       return filtered;
     }
     return [];
