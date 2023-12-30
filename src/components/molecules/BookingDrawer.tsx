@@ -6,11 +6,11 @@ import { formatDate } from '@/app/util';
 import { fetchAvailableRooms } from '@/app/roomsAPI';
 import { Booking, Context, Room, Service } from '../atoms/Context';
 import RoomCard from './RoomCard';
-import { add, differenceInDays } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 import Button from '../atoms/Button';
 import Filler from '../atoms/Filler';
 import GuestForm from './GuestForm';
-import { BookingObject, createBooking } from '@/app/bookingAPI';
+import { APIBookedRoom, APIBooking, createBooking } from '@/app/bookingAPI';
 import { toast } from 'react-toastify';
 import RoomInfoDrawer from './RoomInfoDrawer';
 import { ServiceCard } from './ServiceCard';
@@ -23,7 +23,7 @@ type Props = {
 
 const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   const { setError, booking, setBooking } = useContext(Context);
-  // steps index: 0: choose room, 1: choose package, 2: addons ,  3:guest info
+
   const [rooms, setRooms] = useState<Room[]>([] as Room[]);
   const [filteredRooms, setFilteredRooms] = useState<Room[]>([] as Room[]);
 
@@ -33,28 +33,33 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   const [roomIndex, setRoomIndex] = useState(0);
 
   function handleOnBackClick(): void {
-    if (step === 0) {
-      if (roomIndex > 0) {
-        const newBooking = { ...booking };
-        newBooking.rooms[roomIndex - 1].room = {} as Room;
+    const newBooking = { ...booking };
+    switch (step) {
+      case 0:
+        newBooking.rooms[roomIndex].room = {} as Room;
         setBooking(newBooking);
-        setRoomIndex(roomIndex - 1);
-      } else {
-        handleOnDrawerClose();
-      }
-    } else if (step === 1) {
-      setStep(0);
-      const newRooms = [...booking.rooms];
-      newRooms.forEach(room => (room.room = {} as Room));
-      setBooking({ ...booking, rooms: newRooms });
-    } else if (step === 2) {
-      setStep(1);
-      // setSelectedAddons([] as Service[]);
-      // setBooking({ ...booking, addons: [] as Service[] });
-      // TODO: remove services from room
-    } else if (step === 3) {
-      setStep(2);
-      setRoomIndex(booking.rooms.length - 1);
+        if (roomIndex > 0) {
+          setRoomIndex(prevState => prevState - 1);
+          setStep(2);
+        } else {
+          handleOnDrawerClose();
+        }
+        break;
+      case 1:
+        newBooking.rooms[roomIndex].package = {} as Service;
+        setBooking(newBooking);
+        setStep(prevState => (prevState - 1) as 0 | 1 | 2 | 3);
+        break;
+      case 2:
+        newBooking.rooms[roomIndex].addons = [] as Service[];
+        setBooking(newBooking);
+        setStep(prevState => (prevState - 1) as 0 | 1 | 2 | 3);
+        break;
+      case 3:
+        setStep(prevState => (prevState - 1) as 0 | 1 | 2 | 3);
+        break;
+      default:
+        break;
     }
   }
 
@@ -75,51 +80,83 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   }
 
   async function handleOnNextClick(): Promise<void> {
-    const newBooking: BookingObject = {} as BookingObject;
-    if (step === 3) {
-      if (isBookingReadyToBeCreated()) {
-        newBooking.checkinDate = booking.checkin;
-        newBooking.checkoutDate = booking.checkout;
-        newBooking.hotel_id = booking.hotel._id;
-        // add rooms and guest
-        try {
-          const response = await createBooking(newBooking);
-          if (response && response.ok) {
-            const createdBooking = await response.json();
-            if (createdBooking && createdBooking._id) {
-              toast.success('Your booking was created successfully!');
-            }
-          } else {
-            throw new Error('Booking could not be created');
-          }
-        } catch (error) {
-          console.error('Error creating booking', error);
-          setError({ message: 'Error creating booking', shouldRefresh: false });
-        } finally {
-          setStep(0);
-          setRooms([] as Room[]);
-          setBooking({} as Booking);
-          onClose();
+    switch (step) {
+      case 0:
+        if (booking.rooms[roomIndex].room._id) {
+          setStep(prevState => (prevState + 1) as 0 | 1 | 2 | 3);
         }
-      }
-    } else if (step === 2) {
-      if (hasSelectedAllRooms()) {
-        setStep(3);
-      } else {
-        setStep(0);
-        setRoomIndex(prevState => (prevState < booking.rooms.length ? prevState + 1 : prevState));
-      }
-    } else {
-      setStep(prevStep => (prevStep + 1) as 0 | 1 | 2 | 3);
+        break;
+      case 1:
+        if (booking.rooms[roomIndex].package._id) {
+          setStep(prevState => (prevState + 1) as 0 | 1 | 2 | 3);
+        }
+        break;
+      case 2:
+        setStep(prevState => (prevState + 1) as 0 | 1 | 2 | 3);
+        break;
+      case 3:
+        if (isBookingReadyToBeCreated()) {
+          const newBooking = convertToAPIBooking();
+          try {
+            const response = await createBooking(newBooking);
+            if (response && response.ok) {
+              const createdBooking = await response.json();
+              if (createdBooking && createdBooking._id) {
+                handleOnDrawerClose();
+                toast.success('Your booking was created successfully!');
+              }
+            } else {
+              throw new Error('Booking could not be created');
+            }
+          } catch (error) {
+            console.error('Error creating booking', error);
+            setError({ message: 'Error creating booking', shouldRefresh: false });
+          } finally {
+            setStep(0);
+            setRooms([] as Room[]);
+            setBooking({} as Booking);
+            onClose();
+          }
+        } else if (roomIndex < booking.rooms.length - 1) {
+          setRoomIndex(prevState => prevState + 1);
+          setStep(0);
+        }
+        break;
+      default:
+        break;
     }
   }
 
+  function convertToAPIBooking(): APIBooking {
+    return {
+      checkinDate: booking.checkin,
+      checkoutDate: booking.checkout,
+      hotelId: booking.hotel._id,
+      guest: booking.guest,
+      guestsAmount: booking.guest.numberOfGuests,
+      rooms: booking.rooms.map(room => {
+        const newRoom: APIBookedRoom = {} as APIBookedRoom;
+        newRoom.roomId = room.room._id;
+        newRoom.packageId = room.package._id;
+        newRoom.addonsIds = room.addons.map(addon => addon._id);
+        newRoom.guest = room.guest;
+        return newRoom;
+      }),
+    } as APIBooking;
+  }
+
   function handleOnDrawerClose(): void {
-    setRooms([]);
+    setRooms([] as Room[]);
     const newBooking = { ...booking };
-    newBooking.rooms.forEach(room => (room.room = {} as Room));
+    newBooking.rooms.forEach(room => {
+      room.room = {} as Room;
+      room.package = {} as Service;
+      room.addons = [] as Service[];
+    });
     newBooking.price = 0;
     setBooking(newBooking);
+    setStep(0);
+    setRoomIndex(0);
     onClose();
   }
 
@@ -181,12 +218,6 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     }
     return [];
   }
-
-  useLayoutEffect(() => {
-    if (booking.rooms && roomIndex === booking.rooms.length) {
-      setStep(1);
-    }
-  }, [roomIndex]);
 
   useEffect(() => {
     async function getRooms() {
@@ -252,7 +283,10 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         <DrawerFooter
           onNextClick={handleOnNextClick}
           step={step}
-          nextDisabled={step === 3 && !isBookingReadyToBeCreated()}
+          nextDisabled={
+            (step === 3 && !isBookingReadyToBeCreated()) ||
+            (step === 1 && !booking.rooms[roomIndex].package)
+          }
           roomIndex={roomIndex}
         />
       }
@@ -359,8 +393,17 @@ const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled, 
   const nights = differenceInDays(booking.checkout, booking.checkin);
 
   function getTotalPriceForBooking(): number {
-    const total = booking.rooms.reduce((acc, room) => acc + room.room.price, 0);
-    return total * nights;
+    let total = 0;
+    booking.rooms.forEach(room => {
+      total += room.room.price * nights;
+      if (room.package) {
+        total += room.package.price * nights;
+      }
+      if (room.addons) {
+        room.addons.forEach(addon => (total += addon.price));
+      }
+    });
+    return total;
   }
 
   function getTotalPricePerRoom(): number {
@@ -371,6 +414,8 @@ const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled, 
     const addonsPrice = booking.rooms[roomIndex].addons
       ? booking.rooms[roomIndex].addons.reduce((acc, addon) => acc + addon.price, 0)
       : 0;
+    console.log(booking.rooms[roomIndex]);
+    console.log(totalRoomPrice, totalPackagePrice, addonsPrice);
     return totalRoomPrice + totalPackagePrice + addonsPrice;
   }
 

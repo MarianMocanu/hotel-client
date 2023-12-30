@@ -67,6 +67,7 @@ const GuestsDrawer: FC<Props> = ({ onClose, isOpen }) => {
   }
 
   function handleAddRoom(): void {
+    if (roomGuests.length === 3) return;
     setRoomGuests(previousGuests => {
       const newGuests = [...previousGuests];
       newGuests.push({ adults: 0, kids: 0, infants: 0 });
@@ -75,6 +76,7 @@ const GuestsDrawer: FC<Props> = ({ onClose, isOpen }) => {
   }
 
   function handleRemoveRoom(): void {
+    if (roomGuests.length === 1) return;
     setRoomGuests(previousGuests => {
       const newGuests = [...previousGuests];
       newGuests.pop();
@@ -149,10 +151,16 @@ const GuestsDrawer: FC<Props> = ({ onClose, isOpen }) => {
         </div>
       ))}
       <div className={`${styles.horizontal} ${styles.justify}`}>
-        <div className={styles.button} onClick={handleAddRoom}>
+        <div
+          className={`${styles.button} ${roomGuests.length === 3 ? styles.disabled : ''}`}
+          onClick={handleAddRoom}
+        >
           Add room
         </div>
-        <div className={styles.button} onClick={handleRemoveRoom}>
+        <div
+          className={`${styles.button} ${roomGuests.length === 1 ? styles.disabled : ''}`}
+          onClick={handleRemoveRoom}
+        >
           Remove room
         </div>
       </div>

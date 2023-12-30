@@ -61,7 +61,7 @@ export type Booking = {
 export type BookedRoom = {
   room: Room;
   guest: Partial<Guest>;
-  package: Service | null;
+  package: Service;
   addons: Service[];
 };
 

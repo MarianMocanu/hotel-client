@@ -8,13 +8,18 @@ const Summary: FC = () => {
   const { setError, booking, setBooking } = useContext(Context);
   const nights = differenceInDays(booking.checkout, booking.checkin);
 
-  function calculateSubtotal(): number {
-    const subtotal =
-      booking.price +
-      (booking.package ? booking.package.price : 0) *
-        differenceInDays(booking.checkout, booking.checkin) +
-      (booking.addons ? booking.addons.reduce((acc, addon) => acc + addon.price, 0) : 0);
-    return subtotal;
+  function calculateTotalPriceForBooking(): number {
+    let total = 0;
+    booking.rooms.forEach(room => {
+      total += room.room.price * nights;
+      if (room.package) {
+        total += room.package.price * nights;
+      }
+      if (room.addons) {
+        room.addons.forEach(addon => (total += addon.price));
+      }
+    });
+    return total;
   }
 
   return (
@@ -22,6 +27,7 @@ const Summary: FC = () => {
       <h3 className={styles.heading}>Summary</h3>
       {booking.rooms.map((room, index) => (
         <div className={styles.roomContainer} key={index.toString()}>
+          {/* room info */}
           <div className={styles.row}>
             <div className={styles.description}>
               {`${room.room.name} for ${nights} ${nights === 1 ? 'night' : 'nights'}`}
@@ -31,28 +37,28 @@ const Summary: FC = () => {
               {(room.room.price * nights).toLocaleString('de-DE') + ' kr.'}
             </div>
           </div>
+          {/* package info */}
           <div className={styles.row}>
             <div className={styles.description}>
-              {booking.package ? booking.package.title : 'Accommodation with breakfast buffet'}
+              {room.package ? room.package.title : 'Accommodation with breakfast buffet'}
             </div>
             <div className={styles.price}>
-              {booking.package &&
-                (booking.package?.price * nights).toLocaleString('de-DE') + ' kr.'}
+              {room.package && (room.package.price * nights).toLocaleString('de-DE') + ' kr.'}
             </div>
           </div>
+          {/* addons info */}
+          {room.addons &&
+            room.addons.map((addon, index) => (
+              <div className={styles.row} key={index.toString()}>
+                <div className={styles.description}>{addon.title}</div>
+                <div className={styles.price}>{addon.price.toLocaleString('de-DE') + ' kr.'}</div>
+              </div>
+            ))}
         </div>
       ))}
-      {booking.addons &&
-        booking.addons.length > 0 &&
-        booking.addons.map((addon, index) => (
-          <div key={index.toString()}>
-            {addon.title}
-            {addon.price.toLocaleString('de-DE') + ' kr.'}
-          </div>
-        ))}
       <Filler />
       <h3 className={styles.heading}>
-        Total <span>{calculateSubtotal().toLocaleString('de-DE') + ' kr.'}</span>
+        Total <span>{calculateTotalPriceForBooking().toLocaleString('de-DE') + ' kr.'}</span>
       </h3>
     </div>
   );

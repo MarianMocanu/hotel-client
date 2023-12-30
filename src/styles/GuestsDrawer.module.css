@@ -49,4 +49,11 @@
 
 .button {
   cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.button.disabled {
+  opacity: 0.5;
+  cursor: auto;
 }
