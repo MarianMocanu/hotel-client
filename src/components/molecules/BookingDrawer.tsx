@@ -148,7 +148,9 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         const newRoom: APIBookedRoom = {} as APIBookedRoom;
         newRoom.roomId = room.room._id;
         newRoom.packageId = room.package._id;
-        newRoom.addonsIds = room.addons.map(addon => addon._id);
+        if (room.addons && room.addons.length > 0) {
+          newRoom.addonsIds = room.addons.map(addon => addon._id);
+        }
         newRoom.guest = room.guest;
         return newRoom;
       }),
@@ -167,6 +169,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     setBooking(newBooking);
     setStep(0);
     setRoomIndex(0);
+    setRooms([] as Room[]);
     onClose();
   }
 
@@ -219,12 +222,12 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   function filterRooms(): Room[] {
     if (booking.rooms && booking.rooms.length > 0) {
       const bookedRoomsIds = booking.rooms.map(room => room.room._id);
-      const filtered = rooms.filter(
+      const filteredRooms = rooms.filter(
         room =>
           !bookedRoomsIds.includes(room._id) &&
           room.maxGuests >= booking.rooms[roomIndex].guest.numberOfGuests!,
       );
-      return filtered;
+      return getUniqueRoomTypes(filteredRooms);
     }
     return [];
   }
@@ -241,11 +244,9 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         });
         if (response && response.ok) {
           const parsedResponse = await response.json();
-          if (parsedResponse.rooms) {
-            setRooms(getUniqueRoomTypes(parsedResponse.rooms));
-            setServices(getUniqueServices(parsedResponse.hotel_services));
-          } else {
-            throw new Error('No rooms found');
+          if (parsedResponse.rooms.length > 0) {
+            setRooms(parsedResponse.rooms);
+            setServices(parsedResponse.hotel_services);
           }
         } else {
           throw new Error('No response');
@@ -275,14 +276,16 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       onClose={handleOnDrawerClose}
       open={isOpen}
       title={
-        step === 0
-          ? `Choose room ${roomIndex + 1}`
-          : step === 1
-          ? `Choose room ${roomIndex + 1} package`
-          : step === 2
-          ? `Additional services for room ${roomIndex + 1}`
-          : step === 3
-          ? 'Guest information'
+        filteredRooms.length > 0
+          ? step === 0
+            ? `Choose room ${roomIndex + 1}`
+            : step === 1
+            ? `Choose room ${roomIndex + 1} package`
+            : step === 2
+            ? `Additional services for room ${roomIndex + 1}`
+            : step === 3
+            ? 'Guest information'
+            : ''
           : ''
       }
       zIndex={1001}
@@ -295,7 +298,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           step={step}
           nextDisabled={
             (step === 3 && !isBookingReadyToBeCreated()) ||
-            (step === 1 && !booking.rooms[roomIndex].package._id)
+            (step === 1 && !booking.rooms[roomIndex].package?._id)
           }
           roomIndex={roomIndex}
         />
@@ -303,8 +306,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     >
       {step === 0 && (
         <div className={styles.content}>
-          {step === 0 &&
-            filteredRooms.length > 0 &&
+          {step === 0 && filteredRooms.length > 0 ? (
             filteredRooms.map((room, index) => (
               <RoomCard
                 data={room}
@@ -312,7 +314,12 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
                 key={index.toString()}
                 nights={differenceInDays(booking.checkout, booking.checkin)}
               />
-            ))}
+            ))
+          ) : (
+            <div className={styles.noRooms}>
+              There are no rooms available for the selected period
+            </div>
+          )}
         </div>
       )}
       {/* package page */}

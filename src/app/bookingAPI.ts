@@ -10,7 +10,7 @@ export type APIBooking = {
 export type APIBookedRoom = {
   roomId: string;
   packageId: string;
-  addonsIds: string[];
+  addonsIds: string[] | undefined;
   guest: Partial<Guest>;
 };
 
