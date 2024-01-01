@@ -4,7 +4,6 @@ export type APIBooking = {
   checkinDate: Date;
   checkoutDate: Date;
   guestsAmount: number;
-  totalAmount?: number;
   guest: Guest;
 };
 
