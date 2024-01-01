@@ -12,7 +12,7 @@ type Props = {
 
 const RoomInfoDrawer: FC<Props> = ({ services, roomIndex }) => {
   const { booking, setBooking } = useContext(Context);
-  const [selectedPackage, setSelectedPackage] = useState<Service | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<Service>({} as Service);
 
   function handleOnServiceClick(event: MouseEvent): void {
     const id = event.currentTarget.id;
@@ -65,7 +65,7 @@ const RoomInfoDrawer: FC<Props> = ({ services, roomIndex }) => {
                   <ServiceCard
                     key={index.toString()}
                     service={service}
-                    selected={selectedPackage ? selectedPackage._id === service._id : false}
+                    selected={selectedPackage._id === service._id ?? false}
                     onClick={handleOnServiceClick}
                     roomIndex={roomIndex}
                   />

@@ -75,8 +75,34 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       !!booking.rooms &&
       booking.rooms.length > 0 &&
       !!booking.hotel._id &&
+      !!booking.guest.name &&
+      !!booking.guest.email &&
+      !!booking.guest.phone &&
       hasSelectedAllRooms()
     );
+  }
+
+  async function submitBooking(data: APIBooking): Promise<void> {
+    try {
+      const response = await createBooking(data);
+      if (response && response.ok) {
+        const createdBooking = await response.json();
+        if (createdBooking && createdBooking._id) {
+          handleOnDrawerClose();
+          toast.success('Your booking was created successfully!');
+        }
+      } else {
+        throw new Error('Booking could not be created');
+      }
+    } catch (error) {
+      console.error('Error creating booking', error);
+      setError({ message: 'Error creating booking', shouldRefresh: false });
+    } finally {
+      setStep(0);
+      setRooms([] as Room[]);
+      setBooking({} as Booking);
+      onClose();
+    }
   }
 
   async function handleOnNextClick(): Promise<void> {
@@ -92,34 +118,18 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         }
         break;
       case 2:
-        setStep(prevState => (prevState + 1) as 0 | 1 | 2 | 3);
+        if (roomIndex < booking.rooms.length - 1) {
+          setRoomIndex(prevState => prevState + 1);
+          setStep(0);
+        } else {
+          setStep(prevState => (prevState + 1) as 0 | 1 | 2 | 3);
+        }
         break;
       case 3:
         if (isBookingReadyToBeCreated()) {
-          const newBooking = convertToAPIBooking();
-          try {
-            const response = await createBooking(newBooking);
-            if (response && response.ok) {
-              const createdBooking = await response.json();
-              if (createdBooking && createdBooking._id) {
-                handleOnDrawerClose();
-                toast.success('Your booking was created successfully!');
-              }
-            } else {
-              throw new Error('Booking could not be created');
-            }
-          } catch (error) {
-            console.error('Error creating booking', error);
-            setError({ message: 'Error creating booking', shouldRefresh: false });
-          } finally {
-            setStep(0);
-            setRooms([] as Room[]);
-            setBooking({} as Booking);
-            onClose();
-          }
-        } else if (roomIndex < booking.rooms.length - 1) {
-          setRoomIndex(prevState => prevState + 1);
-          setStep(0);
+          await submitBooking(convertToAPIBooking());
+        } else {
+          console.error('Booking is not ready to be created');
         }
         break;
       default:
@@ -285,7 +295,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           step={step}
           nextDisabled={
             (step === 3 && !isBookingReadyToBeCreated()) ||
-            (step === 1 && !booking.rooms[roomIndex].package)
+            (step === 1 && !booking.rooms[roomIndex].package._id)
           }
           roomIndex={roomIndex}
         />
@@ -414,8 +424,6 @@ const DrawerFooter: FC<DrawerFooterProps> = ({ onNextClick, step, nextDisabled, 
     const addonsPrice = booking.rooms[roomIndex].addons
       ? booking.rooms[roomIndex].addons.reduce((acc, addon) => acc + addon.price, 0)
       : 0;
-    console.log(booking.rooms[roomIndex]);
-    console.log(totalRoomPrice, totalPackagePrice, addonsPrice);
     return totalRoomPrice + totalPackagePrice + addonsPrice;
   }
 
