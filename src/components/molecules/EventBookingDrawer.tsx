@@ -61,28 +61,30 @@ const EventBookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           guest_amount: eventBooking.guest_amount,
           start_time: eventBooking.start_time,
           end_time: eventBooking.end_time,
-          corporation:eventBooking.corporation,
-          comments: eventBooking.comments
-        }
-          try {
-            const response = await createEventBooking(newEventBooking);
-            if (response && response.ok) {
-              const createdEventBooking = await response.json();
-              if (createdEventBooking && createdEventBooking._id) {
-                toast.success('Thanks for your inquiry. One of our representants will message you as soon as possible.');
-              }
-            } else {
-              throw new Error('Sorry, something went wrong. Please try again.');
+          corporation: eventBooking.corporation,
+          comments: eventBooking.comments,
+        };
+        try {
+          const response = await createEventBooking(newEventBooking);
+          if (response && response.ok) {
+            const createdEventBooking = await response.json();
+            if (createdEventBooking && createdEventBooking._id) {
+              toast.success(
+                'Thanks for your inquiry. One of our representants will message you as soon as possible.',
+              );
             }
-          } catch (error) {
-            console.error('Error creating event booking', error);
-            setError({ message: 'Error creating event booking', shouldRefresh: false });
-          } finally {
-            setStep(0);
-            setVenues(undefined);
-            setEventBooking({} as EventBooking);
-            onClose();
+          } else {
+            throw new Error('Sorry, something went wrong. Please try again.');
           }
+        } catch (error) {
+          console.error('Error creating event booking', error);
+          setError({ message: 'Error creating event booking', shouldRefresh: false });
+        } finally {
+          setStep(0);
+          setVenues(undefined);
+          setEventBooking({} as EventBooking);
+          onClose();
+        }
       }
     } else {
       setStep(2);
@@ -113,7 +115,7 @@ const EventBookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       try {
         const response = await fetchVenues({
           hotel_id: eventBooking.hotel_id,
-          guests_amount: eventBooking.guest_amount,
+          guest_amount: eventBooking.guest_amount,
           date: eventBooking.date,
           type: eventBooking.type,
           start_time: eventBooking?.start_time,
@@ -121,7 +123,6 @@ const EventBookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
         });
         if (response && response.ok) {
           const parsedResponse = await response.json();
-          console.log(parsedResponse);
           if (parsedResponse.selected_venue) {
             setVenues(parsedResponse);
           } else {
@@ -177,10 +178,10 @@ const EventBookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
           <h3 className={styles2.title}>Recommended alternatives</h3>
           <div className={styles2.venueCardsGrid}>
             {venues !== undefined &&
-              venues.other_venues.map(venue => {
+              venues.other_venues.map((venue, index) => {
                 return (
                   <VenueCard
-                    key={venue._id}
+                    key={index.toString()}
                     venue={venue}
                     onClick={handleOnVenueClick}
                     isMain={false}

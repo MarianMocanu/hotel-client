@@ -28,8 +28,9 @@ const HotelsDrawer: FC<Props> = ({ isOpen, onClose, isEvent }) => {
     if (hotels && selectedHotelId) {
       const hotel = hotels.find(hotel => hotel._id === selectedHotelId);
       if (hotel) {
-        isEvent ? setEventBooking({...eventBooking, hotel_id:selectedHotelId, hotel_name:hotel.name}) : setBooking({ ...booking, hotel });
-        console.log(eventBooking);
+        isEvent
+          ? setEventBooking({ ...eventBooking, hotel_id: selectedHotelId, hotel_name: hotel.name })
+          : setBooking({ ...booking, hotel });
         onClose();
       }
     }

@@ -1,10 +1,12 @@
-export const fetchAvailableRooms = async (data: {
+type RoomsQuery = {
   hotelId: string;
   numberOfRooms: number;
   numberOfGuests: number;
   checkinDate: Date;
   checkoutDate: Date;
-}) => {
+};
+
+export const fetchAvailableRooms = async (data: RoomsQuery) => {
   try {
     const response = await fetch('http://localhost:4200/bookings/available-rooms', {
       method: 'POST',

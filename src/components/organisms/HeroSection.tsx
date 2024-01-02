@@ -68,7 +68,6 @@ function HeroSection() {
 
   function openEventBookingDrawer(): void {
     tab === 'Meeting & Conference' && setEventBooking({ ...eventBooking, type: 'meeting' });
-    console.log(eventBooking);
     setDrawerOpen('eventBooking');
   }
 
@@ -167,14 +166,12 @@ function HeroSection() {
               <FaChevronDown />
             </div>
 
-            <div className={`${styles.horizontal} ${styles.border}`} onClick={openCalendarDrawer}>
-              <div className={styles.option}>
-                <div>
-                  <p className={styles.optionLabel}>Date</p>
-                  <p className={styles.optionValue}>{formatDate(eventBooking.date)}</p>
-                </div>
-                <FaChevronDown />
+            <div className={`${styles.option} ${styles.border}`} onClick={openCalendarDrawer}>
+              <div>
+                <p className={styles.optionLabel}>Date</p>
+                <p className={styles.optionValue}>{formatDate(eventBooking.date)}</p>
               </div>
+              <FaChevronDown />
             </div>
 
             <div className={`${styles.horizontal} ${styles.border}`}>

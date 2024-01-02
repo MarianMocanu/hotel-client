@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext, useState, MouseEvent } from 'react';
 import { Booking, Context, User } from '../atoms/Context';
 import { differenceInDays, format } from 'date-fns';
 import { EditProfileSection } from '../molecules/EditProfileSection';
@@ -12,9 +12,8 @@ function ProfileSection() {
   const [tab, setTab] = useState<'profile' | 'bookings'>('profile');
   const [isEditionEnabled, setEditionEnabled] = useState<boolean>(false);
 
-  function handleOnTabClick(event: React.MouseEvent<HTMLElement>): void {
-    console.log('tab');
-    const tab = (event.currentTarget as HTMLElement).id;
+  function handleOnTabClick(event: MouseEvent): void {
+    const tab = event.currentTarget.id;
     if (tab) {
       setTab(tab as 'profile' | 'bookings');
     }
@@ -112,8 +111,6 @@ type BookingCardProps = {
   booking: Booking;
 };
 const BookingCard: FC<BookingCardProps> = ({ booking }) => {
-  console.log(booking);
-
   return (
     <div className={styles.bookingCard}>
       <Image
@@ -125,15 +122,15 @@ const BookingCard: FC<BookingCardProps> = ({ booking }) => {
       />
       <div className={styles.cardContent}>
         <div>
-          <p className={styles.cardtitle} >Booking Nr</p>
+          <p className={styles.cardtitle}>Booking Nr</p>
           <p>{booking._id && booking._id.slice(-6)}</p>
         </div>
         <div>
           <FaCalendarAlt className={styles.icon} />
           <p>
-            {booking.checkoutDate &&
-              `${format(new Date(booking.checkoutDate), 'dd/MM/yyyy')} - ${format(
-                new Date(booking.checkoutDate),
+            {booking.checkout &&
+              `${format(new Date(booking.checkout), 'dd/MM/yyyy')} - ${format(
+                new Date(booking.checkout),
                 'dd/MM/yyyy',
               )}`}
           </p>
@@ -141,22 +138,22 @@ const BookingCard: FC<BookingCardProps> = ({ booking }) => {
         <div>
           <FaMoon className={styles.icon} />
           <p>
-            {booking.checkinDate && booking.checkoutDate
-              ? differenceInDays(new Date(booking.checkoutDate), new Date(booking.checkinDate))
+            {booking.checkin && booking.checkout
+              ? differenceInDays(new Date(booking.checkout), new Date(booking.checkin))
               : 'N/A'}{' '}
             Nights
           </p>
         </div>
         <div>
-          {booking.guestsAmount && booking.guestsAmount > 1 ? (
+          {booking.guest.numberOfGuests && booking.guest.numberOfGuests > 1 ? (
             <>
               <FaUserFriends className={styles.icon} />
-              <p>{booking.guestsAmount} Guests </p>
+              <p>{booking.guest.numberOfGuests} Guests </p>
             </>
           ) : (
             <>
               <FaUser className={styles.icon} />
-              <p>{booking.guestsAmount} Guest</p>
+              <p>{booking.guest.numberOfGuests} Guest</p>
             </>
           )}
         </div>

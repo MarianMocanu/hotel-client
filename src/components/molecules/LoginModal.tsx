@@ -66,7 +66,6 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
             localStorage.setItem('@token', data.token);
             const profile: User = await getLogin();
             if (profile.name && profile.email) {
-              console.log(profile)
               setUser(profile);
             }
           } else {
@@ -107,9 +106,9 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
     setUser({} as User);
     closeModal();
   }
-  
-  function openProfile() : void {
-    setPage('userPage')
+
+  function openProfile(): void {
+    setPage('userPage');
     closeModal();
   }
 
@@ -153,7 +152,7 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
         </form>
       ) : (
         <div className={styles.container}>
-          <Button text='See Profile' onClick={openProfile} />
+          <Button text="See Profile" onClick={openProfile} />
           <Button text="Log out" onClick={handleLogout} secondary />
         </div>
       )}

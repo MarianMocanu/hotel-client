@@ -63,7 +63,6 @@ const EventFieldDrawer: FC<Props> = ({ isOpen, onClose, field }) => {
 
   function handleOnClick(event: MouseEvent): void {
     const selection = event.currentTarget.id;
-    console.log(selection);
     field === 'Event Type' ? setSelectedEventType(selection) : setSelectedTimeslot(selection);
   }
 
@@ -127,7 +126,11 @@ const EventFieldDrawer: FC<Props> = ({ isOpen, onClose, field }) => {
         </div>
       )}
       <Filler />
-      <Button text="Select" onClick={handleSubmit} disabled={field === 'Event Type' ? !selectedEventType : !selectedTimeslot} />
+      <Button
+        text="Select"
+        onClick={handleSubmit}
+        disabled={field === 'Event Type' ? !selectedEventType : !selectedTimeslot}
+      />
     </Drawer>
   );
 };

@@ -49,7 +49,11 @@ export const DrawerHeader: FC<DrawerHeaderProps> = ({ onBackClick, isEvent }) =>
         <div className={styles.icon}>
           <FaUser />
         </div>
-        {isEvent ? <p>{eventBooking.guest_amount} participants</p> : <p>{booking.guest?.guestsString}</p>}
+        {isEvent ? (
+          <p>{eventBooking.guest_amount} participants</p>
+        ) : (
+          <p>{booking.guest?.guestsString}</p>
+        )}
       </div>
       {!isEvent && (
         <div className={styles.horizontal}>
