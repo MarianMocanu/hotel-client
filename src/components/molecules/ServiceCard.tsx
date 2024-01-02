@@ -1,21 +1,22 @@
-import React, { FC, MouseEventHandler, useContext } from 'react';
+import React, { FC, useContext, MouseEvent } from 'react';
 import { Context, Service } from '../atoms/Context';
 import styles from '@/styles/RoomInfoDrawer.module.css';
 import { differenceInDays } from 'date-fns';
 import { FaCheckCircle } from 'react-icons/fa';
 
-type PackageCardProps = {
-  key: number;
+type Props = {
   service: Service;
+  onClick: (event: MouseEvent) => void;
   selected: boolean;
-  onClick: MouseEventHandler<HTMLDivElement>;
+  roomIndex: number;
 };
 
-export const PackageCard: FC<PackageCardProps> = ({ service, selected, onClick }) => {
+export const ServiceCard: FC<Props> = ({ service, onClick, selected, roomIndex }) => {
   const { booking } = useContext(Context);
+  const nights = differenceInDays(booking.checkout, booking.checkin);
   return (
     <div
-      className={`${styles.container} ${selected ? styles.selected : ''}`}
+      className={`${styles.card} ${selected ? styles.selected : ''}`}
       onClick={onClick}
       id={service._id}
     >
@@ -24,11 +25,10 @@ export const PackageCard: FC<PackageCardProps> = ({ service, selected, onClick }
         <p className={styles.price}>
           {service.type === 'package'
             ? (
-                booking.price +
-                service.price * differenceInDays(booking.checkout, booking.checkin)
-              ).toLocaleString('de-DE')
-            : service.price.toLocaleString('de-DE')}
-          kr.
+                booking.rooms[roomIndex].room.price * nights +
+                service.price * nights
+              ).toLocaleString('de-DE') + ' kr.'
+            : service.price.toLocaleString('de-DE') + ' kr.'}
         </p>
       </div>
       {selected && (

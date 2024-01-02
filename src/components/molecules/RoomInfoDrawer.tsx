@@ -1,95 +1,81 @@
-import React, { useContext, useState } from 'react';
+import React, { FC, useContext, useState, MouseEvent, useEffect, useLayoutEffect } from 'react';
 import { Context, Service } from '../atoms/Context';
 import Image from 'next/image';
 import styles from '@/styles/RoomInfoDrawer.module.css';
 import { BsGem, BsBookmarkStar } from 'react-icons/bs';
-import { PackageCard } from '../atoms/PackageCard';
+import { ServiceCard } from './ServiceCard';
 
-function RoomInfoDrawer({ services }: { services: Service[] }) {
-  const defaultPackage: Service = {
-    _id: 'default',
-    title: 'Accommodation with breakfast buffet',
-    price: 0,
-    type: 'package',
-  };
+type Props = {
+  services: Service[];
+  roomIndex: number;
+};
 
-  const { setError, booking, setBooking } = useContext(Context);
-  const [selectedPackage, setSelectedPackage] = useState<Service>(defaultPackage);
+const RoomInfoDrawer: FC<Props> = ({ services, roomIndex }) => {
+  const { booking, setBooking } = useContext(Context);
+  const [selectedPackage, setSelectedPackage] = useState<Service>({} as Service);
 
-  function handlePackageChange(service: Service): void {
-    setSelectedPackage(service as Service);
-    if (service._id !== 'default') {
-      setBooking({ ...booking, package: service });
-    } else {
-      setBooking({ ...booking, package: null });
+  function handleOnServiceClick(event: MouseEvent): void {
+    const id = event.currentTarget.id;
+    const service = services.find(service => service._id === id);
+    if (service) {
+      const newBooking = { ...booking };
+      newBooking.rooms[roomIndex].package = service;
+      setSelectedPackage(service as Service);
+      setBooking(newBooking);
     }
-
-    console.log(booking.package);
   }
 
-  return (
-    <>
-      <div className={styles.overview}>
-        {booking.room && (
-          <>
-            <Image
-              src={`/rooms/${booking.room.type}.webp`}
-              alt="hotel"
-              width={350}
-              height={200}
-              className={styles.flex}
-            />
-            <Image
-              src={`/rooms/${booking.room.type}.webp`}
-              alt="hotel"
-              width={350}
-              height={200}
-              className={styles.flex}
-            />
-          </>
-        )}
-      </div>
-      <div className={styles.roomHeader}>
-        <h3 className={styles.title}>{booking.room.name}</h3>
-        <div>
-          <p className={styles.facilitiesgrid}>
-            {booking.room.facilities.map((amenity, index) => (
-              <span className={styles.facility} key={index}>
-                {index % 2 === 0 ? <BsGem /> : <BsBookmarkStar />}
-                {amenity}
-              </span>
-            ))}
-          </p>
-          <p>{booking.room.description}</p>
+  useLayoutEffect(() => {
+    if (booking.rooms[roomIndex].package) {
+      setSelectedPackage(booking.rooms[roomIndex].package);
+    }
+  }, []);
+
+  if (booking.rooms[roomIndex] && booking.rooms[roomIndex].room._id) {
+    return (
+      <div className={styles.container}>
+        <h3 className={styles.title}>{booking.rooms[roomIndex].room.name}</h3>
+        <div className={styles.horizontalContainer}>
+          <Image
+            src={`/rooms/${booking.rooms[roomIndex].room.type}.webp`}
+            alt="hotel"
+            width={350}
+            height={200}
+            className={styles.image}
+          />
+          <div className={styles.facilities}>
+            {booking.rooms[roomIndex].room.facilities &&
+              booking.rooms[roomIndex].room.facilities.map((amenity, index) => (
+                <div className={styles.facility} key={index.toString()}>
+                  {index % 2 === 0 ? <BsGem size={'1rem'} /> : <BsBookmarkStar size={'1rem'} />}
+                  <div>{amenity}</div>
+                </div>
+              ))}
+          </div>
+        </div>
+
+        <p className={styles.description}>{booking.rooms[roomIndex].room.description}</p>
+
+        <h4 className={styles.subtitle}>Packages</h4>
+        <div className={styles.grid}>
+          {services.length > 0 &&
+            services.map((service, index) => {
+              if (service.type === 'package') {
+                return (
+                  <ServiceCard
+                    key={index.toString()}
+                    service={service}
+                    selected={selectedPackage._id === service._id ?? false}
+                    onClick={handleOnServiceClick}
+                    roomIndex={roomIndex}
+                  />
+                );
+              }
+            })}
         </div>
       </div>
-      <h4 className={styles.subtitle}>Packages</h4>
-
-      <div className={styles.grid}>
-        {services.length > 0 && !services.some(service => service.price === 0) && (
-          <PackageCard
-            key={22}
-            service={defaultPackage}
-            selected={selectedPackage && selectedPackage._id === defaultPackage._id}
-            onClick={() => handlePackageChange(defaultPackage)}
-          />
-        )}
-        {services.length > 0 &&
-          services.map((service, index) => {
-            if (service.type === 'package') {
-              return (
-                <PackageCard
-                  key={index}
-                  service={service}
-                  selected={selectedPackage && selectedPackage._id === service._id}
-                  onClick={() => handlePackageChange(service)}
-                />
-              );
-            }
-          })}
-      </div>
-    </>
-  );
-}
+    );
+  }
+};
 
 export default RoomInfoDrawer;
