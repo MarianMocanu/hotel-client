@@ -12,14 +12,22 @@ type Form = {
   name: InputData;
   email: InputData;
   phone: InputData;
+  corporation: InputData;
+  comments: InputData;
 };
 
-const GuestForm: FC = () => {
-  const { booking, setBooking, user } = useContext(Context);
+type Props = {
+  isEvent: boolean;
+};
+
+const GuestForm: FC<Props> = ({ isEvent }) => {
+  const { booking, setBooking, user, eventBooking, setEventBooking } = useContext(Context);
   const [form, setForm] = useState<Form>({
     name: { value: '', valid: false, blurred: false },
     email: { value: '', valid: false, blurred: false },
     phone: { value: '', valid: false, blurred: false },
+    corporation: { value: '', valid: true, blurred: false },
+    comments: { value: '', valid: true, blurred: false },
   });
 
   function validateOnBlur(event: FocusEvent<HTMLInputElement>): void {
@@ -56,20 +64,33 @@ const GuestForm: FC = () => {
         name: { value: user.name, valid: true, blurred: false },
         email: { value: user.email, valid: true, blurred: false },
         phone: { value: user.phone, valid: true, blurred: false },
+        corporation: { value: '', valid: true, blurred: false },
+        comments: { value: '', valid: true, blurred: false },
       });
     }
   }, []);
 
   useEffect(() => {
     if (form.name.valid && form.email.valid && form.phone.valid) {
-      const newGuest = {
-        name: form.name.value,
-        email: form.email.value,
-        phone: form.phone.value,
-        numberOfGuests: booking.guest.numberOfGuests,
-        guestsString: booking.guest.guestsString,
-      };
-      setBooking({ ...booking, guest: newGuest });
+      if (isEvent) {
+        setEventBooking({
+          ...eventBooking,
+          host_name: form.name.value,
+          email: form.email.value,
+          phone: form.phone.value,
+          corporation: form.corporation.value,
+          comments: form.comments.value,
+        });
+      } else {
+        const newGuest = {
+          name: form.name.value,
+          email: form.email.value,
+          phone: form.phone.value,
+          numberOfGuests: booking.guest.numberOfGuests,
+          guestsString: booking.guest.guestsString,
+        };
+        setBooking({ ...booking, guest: newGuest });
+      }
     }
   }, [form]);
 
@@ -102,6 +123,30 @@ const GuestForm: FC = () => {
         name="phone"
         type="text"
       />
+      {isEvent && (
+        <>
+          {eventBooking.type === 'meeting' && (
+            <Input
+              value={form.corporation.value}
+              onChange={handleChange}
+              onBlur={validateOnBlur}
+              placeholder="Corporation"
+              showError={false}
+              name="corporation"
+              type="text"
+            />
+          )}
+          <Input
+            value={form.comments.value}
+            onChange={handleChange}
+            onBlur={validateOnBlur}
+            placeholder="Comments"
+            showError={false}
+            name="comments"
+            type="text"
+          />
+        </>
+      )}
     </form>
   );
 };

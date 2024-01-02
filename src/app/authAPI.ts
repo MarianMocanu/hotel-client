@@ -50,3 +50,16 @@ export const signup = async (user: User) => {
     throw error;
   }
 };
+
+export const editUser = async (id: string, editedUser: Partial<User>) => {
+  try {
+    const response = await fetch(`http://localhost:4200/auth/${id}`, {
+      headers: { 'Content-Type': 'application/json' },
+      method: 'PUT',
+      body: JSON.stringify(editedUser),
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

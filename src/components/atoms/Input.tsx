@@ -10,6 +10,8 @@ const UX_ERRORS = {
   password: 'Minimum required length is 5 characters',
   confirmPassword: 'Passwords do not match',
   dob: 'Required date selection',
+  corporation: 'Error message for corporation', 
+  comments: 'Error message for comments'
 };
 
 type Props = {
@@ -17,7 +19,7 @@ type Props = {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onBlur: (target: FocusEvent<HTMLInputElement>) => void;
   placeholder: string;
-  name: 'name' | 'password' | 'confirmPassword' | 'email' | 'address' | 'phone' | 'dob';
+  name: 'name' | 'password' | 'confirmPassword' | 'email' | 'address' | 'phone' | 'dob' | 'comments' | 'corporation';
   type?: HTMLInputTypeAttribute;
   animated?: boolean;
   showError?: boolean;
