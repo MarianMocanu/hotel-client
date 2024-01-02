@@ -29,6 +29,7 @@ export default function Home() {
   }
 
   function handleSignUpClick(): void {
+    setModalOpen(false);
     setDrawerOpen(true);
   }
 
@@ -83,17 +84,17 @@ export default function Home() {
         >
           <Login isOpen={isModalOpen} closeModal={closeModal} onSignUpClick={handleSignUpClick} />
         </Header>
-        {page === 'landingPage' ?
-        <main>
-          <HeroSection />
-          <CardsSection />
-          <SignUpDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
-        </main>
-        :
-        <main>
-          <ProfileSection />
-        </main>
-        }
+        {page === 'landingPage' ? (
+          <main>
+            <HeroSection />
+            <CardsSection />
+            <SignUpDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
+          </main>
+        ) : (
+          <main>
+            <ProfileSection />
+          </main>
+        )}
         {/* <Footer /> */}
       </div>
     </div>

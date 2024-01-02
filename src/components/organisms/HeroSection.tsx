@@ -14,7 +14,15 @@ import EventGuestsDrawer from '../molecules/EventGuestsDrawer';
 import EventFieldDrawer from '../molecules/EventFieldDrawer';
 import EventBookingDrawer from '../molecules/EventBookingDrawer';
 
-type Drawer = 'hotels' | 'rooms' | 'dates' | 'booking' | 'none' | 'eventGuests' | 'eventField' | 'eventBooking';
+type Drawer =
+  | 'hotels'
+  | 'rooms'
+  | 'dates'
+  | 'booking'
+  | 'none'
+  | 'eventGuests'
+  | 'eventField'
+  | 'eventBooking';
 
 type Tab = 'Acommodation' | 'Meeting & Conference' | 'Banquet';
 
@@ -59,7 +67,7 @@ function HeroSection() {
   }
 
   function openEventBookingDrawer(): void {
-    tab === 'Meeting & Conference' && setEventBooking({...eventBooking, type: 'meeting'})
+    tab === 'Meeting & Conference' && setEventBooking({ ...eventBooking, type: 'meeting' });
     console.log(eventBooking);
     setDrawerOpen('eventBooking');
   }
@@ -143,7 +151,9 @@ function HeroSection() {
             <div className={`${styles.option} ${styles.border}`} onClick={openEventGuestsDrawer}>
               <div>
                 <p className={styles.optionLabel}>Number of Participants</p>
-                <p className={styles.optionValue}>{eventBooking?.guest_amount || 'Add participants'}</p>
+                <p className={styles.optionValue}>
+                  {eventBooking?.guest_amount || 'Add participants'}
+                </p>
               </div>
               <FaChevronDown />
             </div>
@@ -188,7 +198,13 @@ function HeroSection() {
               text="Search"
               onClick={openEventBookingDrawer}
               iconRight={<FaSearch />}
-              disabled={!eventBooking.hotel_id || !eventBooking.guest_amount || !eventBooking.date || !eventBooking.start_time || !eventBooking.end_time}
+              disabled={
+                !eventBooking.hotel_id ||
+                !eventBooking.guest_amount ||
+                !eventBooking.date ||
+                !eventBooking.start_time ||
+                !eventBooking.end_time
+              }
             />
           </div>
         )}
@@ -208,16 +224,16 @@ function HeroSection() {
             <div className={`${styles.option} ${styles.border}`} onClick={openEventGuestsDrawer}>
               <div>
                 <p className={styles.optionLabel}>Number of Participants</p>
-                <p className={styles.optionValue}>{eventBooking?.guest_amount || 'Add participants'}</p>
+                <p className={styles.optionValue}>
+                  {eventBooking?.guest_amount || 'Add participants'}
+                </p>
               </div>
               <FaChevronDown />
             </div>
             <div className={`${styles.option} ${styles.border}`} onClick={openHotelsDrawer}>
               <div>
                 <p className={styles.optionLabel}>Hotel</p>
-                <p className={styles.optionValue}>
-                  {eventBooking.hotel_name || 'Choose hotel'}
-                </p>
+                <p className={styles.optionValue}>{eventBooking.hotel_name || 'Choose hotel'}</p>
               </div>
               <FaChevronDown />
             </div>
@@ -235,11 +251,16 @@ function HeroSection() {
               text="Search"
               onClick={openEventBookingDrawer}
               iconRight={<FaSearch />}
-              disabled={!eventBooking.hotel_id || !eventBooking.guest_amount || !eventBooking.date || !eventBooking.type}
+              disabled={
+                !eventBooking.hotel_id ||
+                !eventBooking.guest_amount ||
+                !eventBooking.date ||
+                !eventBooking.type
+              }
             />
           </div>
         )}
-        <EventBookingDrawer isOpen={drawerOpen === 'eventBooking'} onClose={handleCloseDrawer}  />
+        <EventBookingDrawer isOpen={drawerOpen === 'eventBooking'} onClose={handleCloseDrawer} />
         <BookingDrawer isOpen={drawerOpen === 'booking'} onClose={handleCloseDrawer} />
       </div>
     </section>
