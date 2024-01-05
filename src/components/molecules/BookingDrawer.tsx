@@ -144,7 +144,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       checkinDate: booking.checkin,
       checkoutDate: booking.checkout,
       hotelId: booking.hotel._id,
-      guest: booking.guest,
+      guest: { ...booking.guest, userId: user._id },
       guestsAmount: booking.guest.numberOfGuests,
       rooms: booking.rooms.map(room => {
         const newRoom: APIBookedRoom = {} as APIBookedRoom;
@@ -269,7 +269,9 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
     }
   }, [isOpen]);
 
-  useLayoutEffect(() => {
+  const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+
+  useIsomorphicLayoutEffect(() => {
     setFilteredRooms(filterRooms());
   }, [rooms, roomIndex]);
 

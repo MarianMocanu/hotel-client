@@ -18,7 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const { setUser, page, setPage } = useContext(Context);
+  const { setUser, page, user } = useContext(Context);
 
   function closeModal(): void {
     setModalOpen(false);
@@ -54,6 +54,10 @@ export default function Home() {
     }
     getLogin();
   }, []);
+
+  useEffect(() => {
+    console.log(JSON.stringify(user, null, 2));
+  }, [user]);
 
   return (
     <div>

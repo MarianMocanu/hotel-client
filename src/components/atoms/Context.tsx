@@ -7,9 +7,17 @@ export type User = {
   phone?: string;
   address?: string;
   dob?: string;
-  bookings?: Booking[]; 
+  bookings?: APIBooking[];
 };
 
+export type APIBooking = {
+  _id: string;
+  checkinDate: string;
+  checkoutDate: string;
+  guestsAmount: number;
+  nights: number;
+  totalAmount: number;
+};
 
 export type Hotel = {
   _id: string;
@@ -53,7 +61,7 @@ export type Service = {
 };
 
 export type Booking = {
-  _id?:string
+  _id?: string;
   hotel: Hotel;
   rooms: BookedRoom[];
   checkin: Date;
@@ -80,7 +88,7 @@ export type EventVenue = {
   partyPerks: string[];
   meetingDesc: string;
   partyDesc: string;
-}
+};
 
 export type EventBooking = {
   hotel_name: string;
@@ -97,7 +105,7 @@ export type EventBooking = {
   corporation: string;
   comments: string;
   venue_data: EventVenue;
-}
+};
 
 export type Page = 'landingPage' | 'userPage';
 
@@ -138,7 +146,7 @@ export const ContextProvider = ({ children }: PropsWithChildren) => {
     eventBooking,
     setEventBooking,
     page,
-    setPage
+    setPage,
   };
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;

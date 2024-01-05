@@ -21,7 +21,7 @@ type Data = {
 const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
   const [email, setEmail] = useState<Data>({} as Data);
   const [password, setPassword] = useState<Data>({} as Data);
-  const { user, setUser, setError, page, setPage } = useContext(Context);
+  const { user, setUser, setError, setPage } = useContext(Context);
 
   function handleEmailChange(event: ChangeEvent<HTMLInputElement>) {
     setEmail({ ...email, value: event.target.value });
