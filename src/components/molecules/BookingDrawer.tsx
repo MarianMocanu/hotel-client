@@ -353,7 +353,7 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
       {step === 3 && (
         <div className={styles.overview}>
           <div className={styles.guestInfo}>
-            <GuestForm />
+            <GuestForm isEvent={false} />
           </div>
           <div className={styles.summaryContainer}>
             <Summary />
@@ -364,40 +364,6 @@ const BookingDrawer: FC<Props> = ({ onClose, isOpen }) => {
   );
 };
 export default BookingDrawer;
-
-// type DrawerHeaderProps = {
-//   onBackClick: () => void;
-// };
-// const DrawerHeader: FC<DrawerHeaderProps> = ({ onBackClick }) => {
-//   const { booking } = useContext(Context);
-//   return (
-//     <div className={styles.horizontal}>
-//       <div className={`${styles.icon} ${styles.background}`} onClick={onBackClick}>
-//         <FaChevronLeft />
-//       </div>
-//       <div className={styles.horizontal}>
-//         <div className={styles.icon}>
-//           <FaCalendarAlt />
-//         </div>
-//         <p>
-//           {formatDate(booking.checkin)} - {formatDate(booking.checkout)}
-//         </p>
-//       </div>
-//       <div className={styles.horizontal}>
-//         <div className={styles.icon}>
-//           <FaUser />
-//         </div>
-//         <p>{booking.guest?.guestsString}</p>
-//       </div>
-//       <div className={styles.horizontal}>
-//         <div className={styles.icon}>
-//           <FaMapMarkerAlt />
-//         </div>
-//         <p>{booking.hotel?.name}</p>
-//       </div>
-//     </div>
-//   );
-// };
 
 type DrawerFooterProps = {
   onNextClick: () => void;

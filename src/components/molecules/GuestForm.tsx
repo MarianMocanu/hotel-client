@@ -59,11 +59,11 @@ const GuestForm: FC<Props> = ({ isEvent }) => {
   }
 
   useEffect(() => {
-    if (user.email && user.name && user.phone) {
+    if (user.email && user.name) {
       setForm({
         name: { value: user.name, valid: true, blurred: false },
         email: { value: user.email, valid: true, blurred: false },
-        phone: { value: user.phone, valid: true, blurred: false },
+        phone: { value: '', valid: true, blurred: false },
         corporation: { value: '', valid: true, blurred: false },
         comments: { value: '', valid: true, blurred: false },
       });
