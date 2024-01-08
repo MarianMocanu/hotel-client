@@ -66,11 +66,11 @@ export const EditProfileSection: FC<Props> = ({ isEditionEnabled, setEditionEnab
   }
 
   useEffect(() => {
-    if (user.email && user.name && user.phone) {
+    if (user.email && user.name) {
       setForm({
         name: { value: user.name, valid: true, blurred: false },
         email: { value: user.email, valid: true, blurred: false },
-        phone: { value: user.phone, valid: true, blurred: false },
+        phone: { value: user.phone ?? '', valid: true, blurred: false },
         address: { value: user.address ? user.address : '', valid: true, blurred: false },
         dob: {
           value: user.dob ? format(new Date(user.dob), 'yyyy-MM-dd') : '',
@@ -131,14 +131,7 @@ export const EditProfileSection: FC<Props> = ({ isEditionEnabled, setEditionEnab
   }
 
   function isUserValid(): boolean {
-    if (
-      form.name &&
-      form.name.valid &&
-      user.phone &&
-      form.phone.valid &&
-      user.email &&
-      form.email.valid
-    ) {
+    if (form.name && form.name.valid && user.email && form.email.valid) {
       return true;
     }
     return false;
