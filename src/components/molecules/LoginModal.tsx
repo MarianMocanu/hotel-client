@@ -64,6 +64,7 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
           const data = await response.json();
           if (data && data.token) {
             localStorage.setItem('@token', data.token);
+            document.cookie = `token=${data.token}`;
             const profile: User = await getLogin();
             if (profile.name && profile.email) {
               setUser(profile);
