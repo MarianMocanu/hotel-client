@@ -24,7 +24,7 @@ type Guest = {
 
 export const createBooking = async (booking: APIBooking) => {
   try {
-    const response = await fetch('http://api:4200/bookings', {
+    const response = await fetch('http://locahost:4200/bookings', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

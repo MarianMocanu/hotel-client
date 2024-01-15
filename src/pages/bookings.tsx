@@ -20,7 +20,7 @@ export default Bookings;
 export const getServerSideProps: GetServerSideProps = async context => {
   const token = context.req.cookies.token;
 
-  const response = await fetch('http://api:4200/auth/account', {
+  const response = await fetch('http://locahost:4200/auth/account', {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,

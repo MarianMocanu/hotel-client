@@ -8,7 +8,7 @@ type RoomsQuery = {
 
 export const fetchAvailableRooms = async (data: RoomsQuery) => {
   try {
-    const response = await fetch('http://api:4200/bookings/available-rooms', {
+    const response = await fetch('http://locahost:4200/bookings/available-rooms', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
