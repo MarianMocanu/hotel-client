@@ -1,11 +1,8 @@
 export const login = async (email: string, password: string) => {
   try {
-    const response = await fetch('http://locahost:4200/auth/login', {
+    const response = await fetch('http://api:4200/auth/login', {
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
       method: 'POST',
       body: JSON.stringify({ email, password }),
@@ -19,12 +16,9 @@ export const login = async (email: string, password: string) => {
 export const fetchProfile = async () => {
   if (localStorage.getItem('@token')) {
     try {
-      const response = await fetch('http://locahost:4200/auth/profile', {
+      const response = await fetch('http://api:4200/auth/profile', {
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
           authorization: `Bearer ${localStorage.getItem('@token')}`,
         },
         method: 'GET',
@@ -48,12 +42,9 @@ type User = {
 
 export const signup = async (user: User) => {
   try {
-    const response = await fetch('http://locahost:4200/auth/signup', {
+    const response = await fetch('http://api:4200/auth/signup', {
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
       method: 'POST',
       body: JSON.stringify(user),
@@ -66,12 +57,9 @@ export const signup = async (user: User) => {
 
 export const editUser = async (id: string, editedUser: Partial<User>) => {
   try {
-    const response = await fetch(`http://locahost:4200/auth/${id}`, {
+    const response = await fetch(`http://api:4200/auth/${id}`, {
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       },
       method: 'PUT',
       body: JSON.stringify(editedUser),
