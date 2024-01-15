@@ -14,7 +14,7 @@ export type EventBookingObject = {
 
 export const createEventBooking = async (booking: EventBookingObject) => {
   try {
-    const response = await fetch('http://localhost:4200/event-booking', {
+    const response = await fetch('http://api:4200/event-booking', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
