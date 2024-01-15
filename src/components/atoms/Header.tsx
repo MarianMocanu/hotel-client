@@ -17,12 +17,16 @@ const Header: FC<Props> = ({
   handleProfileClick,
   children,
 }) => {
-  const { user } = useContext(Context);
+  const { user, page, setPage } = useContext(Context);
+
+  function goToLandingPage(): void {
+    setPage('landingPage');
+  }
 
   return (
     <>
-      <nav className={styles.nav}>
-        <Image src={logo} alt="logo" height="40" />
+      <nav className={page === 'landingPage' ? styles.nav : styles.profileNav}>
+        <Image onClick={goToLandingPage} src={logo} alt="logo" height="40" />
         <ul className={styles.list}>
           <li className={styles.item} onClick={handleLocationClick}>
             Locations <FaChevronDown />

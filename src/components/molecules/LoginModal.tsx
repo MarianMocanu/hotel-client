@@ -21,7 +21,7 @@ type Data = {
 const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
   const [email, setEmail] = useState<Data>({} as Data);
   const [password, setPassword] = useState<Data>({} as Data);
-  const { user, setUser, setError } = useContext(Context);
+  const { user, setUser, setError, setPage } = useContext(Context);
 
   function handleEmailChange(event: ChangeEvent<HTMLInputElement>) {
     setEmail({ ...email, value: event.target.value });
@@ -64,6 +64,7 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
           const data = await response.json();
           if (data && data.token) {
             localStorage.setItem('@token', data.token);
+            document.cookie = `token=${data.token}`;
             const profile: User = await getLogin();
             if (profile.name && profile.email) {
               setUser(profile);
@@ -92,6 +93,8 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
       const response = await fetchProfile();
       if (response && response.ok) {
         return await response.json();
+      } else {
+        throw new Error('Response not OK');
       }
     } catch (error) {
       throw new Error('Error parsing response');
@@ -102,6 +105,11 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
     event.preventDefault();
     localStorage.removeItem('@token');
     setUser({} as User);
+    closeModal();
+  }
+
+  function openProfile(): void {
+    setPage('userPage');
     closeModal();
   }
 
@@ -145,9 +153,7 @@ const Login: FC<Props> = ({ isOpen, closeModal, onSignUpClick }) => {
         </form>
       ) : (
         <div className={styles.container}>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, rem consectetur,
-          exercitationem ipsam aspernatur nam temporibus id, sunt assumenda voluptates quos officia!
-          Animi doloribus saepe ab iusto consequuntur non qui!
+          <Button text="See Profile" onClick={openProfile} />
           <Button text="Log out" onClick={handleLogout} secondary />
         </div>
       )}

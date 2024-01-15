@@ -2,6 +2,7 @@ import { Head } from 'next/document';
 import Header from '../components/atoms/Header';
 import HeroSection from '@/components/organisms/HeroSection';
 import CardsSection from '@/components/organisms/CardsSection';
+import ProfileSection from '@/components/organisms/ProfileSection';
 import OffersSection from '@/components/organisms/OffersSection';
 import Footer from '@/components/atoms/Footer';
 import React, { useEffect, useState, useContext } from 'react';
@@ -17,7 +18,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function Home() {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const { setUser, setError } = useContext(Context);
+  const { setUser, page, user } = useContext(Context);
 
   function closeModal(): void {
     setModalOpen(false);
@@ -28,6 +29,7 @@ export default function Home() {
   }
 
   function handleSignUpClick(): void {
+    setModalOpen(false);
     setDrawerOpen(true);
   }
 
@@ -52,6 +54,10 @@ export default function Home() {
     }
     getLogin();
   }, []);
+
+  useEffect(() => {
+    console.log(JSON.stringify(user, null, 2));
+  }, [user]);
 
   return (
     <div>
@@ -82,13 +88,18 @@ export default function Home() {
         >
           <Login isOpen={isModalOpen} closeModal={closeModal} onSignUpClick={handleSignUpClick} />
         </Header>
-        <main>
-          <HeroSection />
-          <CardsSection />
-          <OffersSection />
-          <SignUpDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
-        </main>
-        <Footer />
+        {page === 'landingPage' ? (
+          <main>
+            <HeroSection />
+            <CardsSection />
+            <SignUpDrawer isOpen={isDrawerOpen} onClose={closeDrawer} />
+          </main>
+        ) : (
+          <main>
+            <ProfileSection />
+          </main>
+        )}
+        {/* <Footer /> */}
       </div>
     </div>
   );

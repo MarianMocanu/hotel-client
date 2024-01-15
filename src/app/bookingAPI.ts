@@ -1,20 +1,28 @@
-export type BookingObject = {
-  hotel_id: string;
-  room_id: string;
+export type APIBooking = {
+  hotelId: string;
+  rooms: APIBookedRoom[];
   checkinDate: Date;
   checkoutDate: Date;
-  guestInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    user_id?: string;
-    address?: string;
-  };
   guestsAmount: number;
-  totalAmount?: number;
+  guest: Guest;
 };
 
-export const createBooking = async (booking: any) => {
+export type APIBookedRoom = {
+  roomId: string;
+  packageId: string;
+  addonsIds: string[] | undefined;
+  guest: Partial<Guest>;
+};
+
+type Guest = {
+  name: string;
+  email: string;
+  phone: string;
+  userId?: string;
+  address?: string;
+};
+
+export const createBooking = async (booking: APIBooking) => {
   try {
     const response = await fetch('http://localhost:4200/bookings', {
       method: 'POST',

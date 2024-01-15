@@ -11,10 +11,11 @@ import Button from '../atoms/Button';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  isEvent: boolean;
 };
 
-const HotelsDrawer: FC<Props> = ({ isOpen, onClose }) => {
-  const { setError, setBooking, booking } = useContext(Context);
+const HotelsDrawer: FC<Props> = ({ isOpen, onClose, isEvent }) => {
+  const { setError, setBooking, setEventBooking, eventBooking, booking } = useContext(Context);
   const [hotels, setHotels] = useState<Hotel[] | undefined>(undefined);
   const [selectedHotelId, setSelectedHotelId] = useState<string | undefined>(undefined);
 
@@ -27,7 +28,9 @@ const HotelsDrawer: FC<Props> = ({ isOpen, onClose }) => {
     if (hotels && selectedHotelId) {
       const hotel = hotels.find(hotel => hotel._id === selectedHotelId);
       if (hotel) {
-        setBooking({ ...booking, hotel });
+        isEvent
+          ? setEventBooking({ ...eventBooking, hotel_id: selectedHotelId, hotel_name: hotel.name })
+          : setBooking({ ...booking, hotel });
         onClose();
       }
     }
